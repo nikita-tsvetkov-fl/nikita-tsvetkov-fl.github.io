@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Аэропорт — клининговая компания | демо-лендинг</title>
+<style>
+  :root{--bg:#0f1c2e;--accent:#2dd4a7;--accent2:#1aa37a;--ink:#1a2433;--muted:#5b6b7c;--soft:#f4f7fb}
+  *{margin:0;padding:0;box-sizing:border-box;font-family:-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif}
+  body{color:var(--ink);line-height:1.55}
+  .wrap{max-width:1120px;margin:0 auto;padding:0 24px}
+  /* header */
+  header{position:sticky;top:0;background:rgba(255,255,255,.92);backdrop-filter:blur(8px);border-bottom:1px solid #e7edf5;z-index:10}
+  .nav{display:flex;align-items:center;justify-content:space-between;height:68px}
+  .logo{font-weight:800;font-size:20px;letter-spacing:.3px}
+  .logo span{color:var(--accent2)}
+  .menu{display:flex;gap:28px;list-style:none}
+  .menu a{text-decoration:none;color:var(--muted);font-weight:500;font-size:15px}
+  .menu a:hover{color:var(--ink)}
+  .btn{display:inline-block;background:linear-gradient(135deg,var(--accent),var(--accent2));color:#fff;text-decoration:none;
+       font-weight:600;padding:12px 22px;border-radius:10px;font-size:15px;box-shadow:0 6px 18px rgba(26,163,122,.32);transition:.2s}
+  .btn:hover{transform:translateY(-1px);box-shadow:0 10px 24px rgba(26,163,122,.4)}
+  /* hero */
+  .hero{background:linear-gradient(135deg,#0f1c2e,#16304d);color:#fff;padding:84px 0 96px;position:relative;overflow:hidden}
+  .hero h1{font-size:46px;line-height:1.1;max-width:680px;font-weight:800}
+  .hero p{margin:22px 0 32px;font-size:19px;max-width:560px;color:#c4d2e4}
+  .hero .badges{display:flex;gap:14px;margin-top:34px;flex-wrap:wrap}
+  .badge{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.15);padding:10px 16px;border-radius:30px;font-size:14px}
+  .blob{position:absolute;right:-120px;top:-80px;width:420px;height:420px;border-radius:50%;
+        background:radial-gradient(circle,rgba(45,212,167,.35),transparent 70%)}
+  /* stats */
+  .stats{display:grid;grid-template-columns:repeat(4,1fr);gap:24px;margin-top:-48px}
+  .stat{background:#fff;border-radius:16px;padding:26px 22px;box-shadow:0 12px 30px rgba(15,28,46,.08);text-align:center}
+  .stat b{display:block;font-size:34px;color:var(--accent2);font-weight:800}
+  .stat span{color:var(--muted);font-size:14px}
+  /* services */
+  section{padding:78px 0}
+  .h2{font-size:32px;font-weight:800;text-align:center;margin-bottom:12px}
+  .sub{text-align:center;color:var(--muted);max-width:560px;margin:0 auto 46px;font-size:17px}
+  .grid{display:grid;grid-template-columns:repeat(3,1fr);gap:24px}
+  .card{background:#fff;border:1px solid #e7edf5;border-radius:16px;padding:30px 26px;transition:.2s}
+  .card:hover{transform:translateY(-4px);box-shadow:0 16px 36px rgba(15,28,46,.1);border-color:transparent}
+  .card .ico{width:52px;height:52px;border-radius:12px;background:var(--soft);display:flex;align-items:center;justify-content:center;font-size:26px;margin-bottom:18px}
+  .card h3{font-size:19px;margin-bottom:10px}
+  .card p{color:var(--muted);font-size:15px}
+  /* pricing */
+  .pricing{background:var(--soft)}
+  .plans{display:grid;grid-template-columns:repeat(3,1fr);gap:24px}
+  .plan{background:#fff;border-radius:18px;padding:34px 28px;text-align:center;border:2px solid transparent}
+  .plan.hot{border-color:var(--accent);position:relative}
+  .plan.hot::after{content:"Хит";position:absolute;top:-13px;left:50%;transform:translateX(-50%);
+       background:var(--accent2);color:#fff;font-size:12px;font-weight:700;padding:5px 14px;border-radius:20px}
+  .plan h3{font-size:18px;color:var(--muted);font-weight:600}
+  .price{font-size:40px;font-weight:800;margin:14px 0}
+  .price small{font-size:16px;color:var(--muted);font-weight:500}
+  .plan ul{list-style:none;text-align:left;margin:22px 0 26px}
+  .plan li{padding:9px 0;border-bottom:1px solid #eef2f7;font-size:15px;color:#33445c}
+  .plan li::before{content:"✓ ";color:var(--accent2);font-weight:800}
+  /* cta */
+  .cta{background:linear-gradient(135deg,var(--accent2),#0f8f6a);color:#fff;text-align:center;border-radius:22px;padding:56px 24px;margin:40px 0}
+  .cta h2{font-size:30px;font-weight:800;margin-bottom:12px}
+  .cta p{opacity:.92;margin-bottom:26px;font-size:17px}
+  .cta .btn{background:#fff;color:var(--accent2)}
+  footer{background:var(--ink);color:#9fb0c7;padding:40px 0;font-size:14px}
+  .fcols{display:flex;justify-content:space-between;flex-wrap:wrap;gap:24px}
+  @media(max-width:860px){.menu{display:none}.stats,.grid,.plans{grid-template-columns:1fr 1fr}.hero h1{font-size:34px}}
+  @media(max-width:560px){.stats,.grid,.plans{grid-template-columns:1fr}.hero h1{font-size:28px}}
+</style>
+</head>
+<body>
+<header><div class="wrap nav">
+  <div class="logo">Чисто<span>Дома</span></div>
+  <ul class="menu">
+    <li><a href="#services">Услуги</a></li>
+    <li><a href="#prices">Цены</a></li>
+    <li><a href="#why">Почему мы</a></li>
+    <li><a href="#contacts">Контакты</a></li>
+  </ul>
+  <a href="#contacts" class="btn">Заказать уборку</a>
+</div></header>
+
+<div class="hero"><div class="blob"></div><div class="wrap">
+  <h1>Профессиональная уборка квартир и офисов за 2 часа</h1>
+  <p>Проверенные клинеры, эко-средства и фиксированная цена без доплат. Работаем ежедневно с 8:00 до 22:00.</p>
+  <a href="#prices" class="btn">Рассчитать стоимость</a>
+  <div class="badges">
+    <div class="badge">★ 4.9 — 2 400+ отзывов</div>
+    <div class="badge">Оплата после уборки</div>
+    <div class="badge">Гарантия качества</div>
+  </div>
+</div></div>
+
+<div class="wrap"><div class="stats">
+  <div class="stat"><b>8 лет</b><span>на рынке</span></div>
+  <div class="stat"><b>50 000+</b><span>уборок выполнено</span></div>
+  <div class="stat"><b>120</b><span>клинеров в штате</span></div>
+  <div class="stat"><b>2 часа</b><span>средний выезд</span></div>
+</div></div>
+
+<section id="services"><div class="wrap">
+  <div class="h2">Наши услуги</div>
+  <p class="sub">Закрываем любые задачи по уборке — от поддерживающей до уборки после ремонта.</p>
+  <div class="grid">
+    <div class="card"><div class="ico">🧹</div><h3>Поддерживающая уборка</h3><p>Регулярная уборка для чистоты каждый день: полы, пыль, санузлы, кухня.</p></div>
+    <div class="card"><div class="ico">✨</div><h3>Генеральная уборка</h3><p>Глубокая уборка всех поверхностей, техники, окон и труднодоступных мест.</p></div>
+    <div class="card"><div class="ico">🛠️</div><h3>После ремонта</h3><p>Удаление строительной пыли, разводов, следов краски и клея под ключ.</p></div>
+    <div class="card"><div class="ico">🏢</div><h3>Уборка офисов</h3><p>Договор, регулярный график, отчётность. Работаем в нерабочее время.</p></div>
+    <div class="card"><div class="ico">🛋️</div><h3>Химчистка мебели</h3><p>Диваны, кресла, ковры и матрасы — профессиональная экстракторная чистка.</p></div>
+    <div class="card"><div class="ico">🪟</div><h3>Мытьё окон</h3><p>Окна, балконы и витражи до блеска, в том числе на высоких этажах.</p></div>
+  </div>
+</div></section>
+
+<section id="prices" class="pricing"><div class="wrap">
+  <div class="h2">Прозрачные цены</div>
+  <p class="sub">Стоимость известна заранее и не меняется после уборки.</p>
+  <div class="plans">
+    <div class="plan"><h3>Студия / 1-комн.</h3><div class="price">2 400 ₽<small></small></div>
+      <ul><li>до 40 м²</li><li>2 клинера</li><li>эко-средства включены</li><li>выезд за 2 часа</li></ul>
+      <a href="#contacts" class="btn">Заказать</a></div>
+    <div class="plan hot"><h3>2–3 комнаты</h3><div class="price">3 900 ₽<small></small></div>
+      <ul><li>до 80 м²</li><li>2–3 клинера</li><li>генеральная по запросу</li><li>скидка 15% на повтор</li></ul>
+      <a href="#contacts" class="btn">Заказать</a></div>
+    <div class="plan"><h3>Офис / дом</h3><div class="price">от 6 ₽<small>/м²</small></div>
+      <ul><li>любая площадь</li><li>договор и закрывающие</li><li>регулярный график</li><li>персональный менеджер</li></ul>
+      <a href="#contacts" class="btn">Рассчитать</a></div>
+  </div>
+</div></section>
+
+<section id="why"><div class="wrap">
+  <div class="h2">Почему выбирают ЧистоДома</div>
+  <p class="sub">Мы отвечаем за результат и ценим ваше время.</p>
+  <div class="grid">
+    <div class="card"><div class="ico">🛡️</div><h3>Гарантия результата</h3><p>Если что-то не устроило — переделаем бесплатно в течение 24 часов.</p></div>
+    <div class="card"><div class="ico">👤</div><h3>Проверенные клинеры</h3><p>Штатные сотрудники с обучением, медкнижкой и проверкой службой безопасности.</p></div>
+    <div class="card"><div class="ico">🌿</div><h3>Эко-средства</h3><p>Безопасны для детей и животных, без резкого запаха и агрессивной химии.</p></div>
+  </div>
+</div></section>
+
+<div class="wrap"><div class="cta" id="contacts">
+  <h2>Закажите уборку прямо сейчас</h2>
+  <p>Перезвоним за 5 минут и подберём удобное время.</p>
+  <a href="tel:+70000000000" class="btn">Позвонить: 8 800 000-00-00</a>
+</div></div>
+
+<footer><div class="wrap fcols">
+  <div><div class="logo" style="color:#fff">Чисто<span>Дома</span></div><p style="margin-top:8px">Клининговая компания. Москва и область.</p></div>
+  <div>Услуги · Цены · Вакансии · Договор оферты</div>
+  <div>© 2026 ЧистоДома · демо-лендинг</div>
+</div></footer>
+</body>
+</html>

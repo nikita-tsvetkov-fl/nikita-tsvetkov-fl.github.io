@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Аудит Google Business Profile + локальное SEO (US) — образец работы</title>
+<style>
+  :root{--bg:#0f1320;--card:#171c2e;--ink:#e8ecf6;--mut:#9aa6c4;--acc:#5b8cff;--ok:#37c98a;--warn:#ffb84d;--crit:#ff6b6b;--line:#283050}
+  *{box-sizing:border-box}
+  body{margin:0;font:16px/1.6 -apple-system,Segoe UI,Roboto,Arial,sans-serif;background:var(--bg);color:var(--ink)}
+  .wrap{max-width:940px;margin:0 auto;padding:32px 20px 80px}
+  header{border-bottom:1px solid var(--line);padding-bottom:20px;margin-bottom:28px}
+  .tag{display:inline-block;font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--acc);border:1px solid var(--acc);border-radius:20px;padding:3px 12px;margin-bottom:14px}
+  h1{font-size:27px;margin:0 0 8px}
+  h2{font-size:21px;margin:38px 0 14px}
+  h3{font-size:17px;margin:22px 0 8px}
+  .sub{color:var(--mut);font-size:15px}
+  .note{background:#1b2138;border:1px solid var(--line);border-left:3px solid var(--acc);border-radius:8px;padding:12px 16px;color:var(--mut);font-size:14px;margin:18px 0}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:18px 20px;margin:14px 0}
+  table{width:100%;border-collapse:collapse;margin:14px 0;font-size:14px}
+  th,td{text-align:left;padding:9px 12px;border-bottom:1px solid var(--line);vertical-align:top}
+  th{color:var(--mut);font-weight:600;font-size:13px;text-transform:uppercase;letter-spacing:.04em}
+  .pill{display:inline-block;font-size:12px;font-weight:700;border-radius:6px;padding:2px 9px;white-space:nowrap}
+  .p-crit{background:rgba(255,107,107,.15);color:var(--crit)}
+  .p-warn{background:rgba(255,184,77,.15);color:var(--warn)}
+  .p-ok{background:rgba(55,201,138,.15);color:var(--ok)}
+  .metric{display:inline-flex;flex-direction:column;align-items:flex-start;background:#0c1020;border:1px solid var(--line);border-radius:8px;padding:10px 16px;margin:4px 8px 4px 0}
+  .metric b{font-size:22px}.metric.bad b{color:var(--crit)}.metric.ok b{color:var(--ok)}.metric.warn b{color:var(--warn)}
+  .metric span{font-size:12px;color:var(--mut)}
+  code{background:#0c1020;padding:1px 6px;border-radius:4px;color:#9fc1ff;font-size:13px}
+  ul{margin:8px 0;padding-left:20px}li{margin:5px 0}
+  footer{margin-top:50px;border-top:1px solid var(--line);padding-top:18px;color:var(--mut);font-size:13px}
+  .step{font-weight:700;color:var(--acc)}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header>
+  <span class="tag">Образец работы · Google Business Profile + локальное SEO</span>
+  <h1>Аудит и план роста Google Business Profile для US-бизнеса</h1>
+  <p class="sub">Демонстрационный пример формата и глубины. Кейс-образец: сервисная компания с выездом к клиенту (service-area business) в нескольких городах США — учебный кейс, не реальный клиент. Все цифры — иллюстративные; на реальном проекте они берутся из вашего профиля, Google Maps по целевым городам и данных конкурентов в Local Pack.</p>
+</header>
+
+<div class="note">
+  <b>Зачем документ.</b> Показывает, как я сдаю аудит GBP: каждая находка → почему она мешает ранжированию в Google Maps → конкретное действие с приоритетом → и приоритизированный план роста с метриками. Модель оценки — официальные три фактора Google Local: <b>relevance</b> (соответствие запросу), <b>distance</b> (близость к точке поиска), <b>prominence</b> (авторитет: отзывы, citations, активность).
+</div>
+
+<h2>1. Сводка локальной видимости</h2>
+<div class="card">
+  <span class="metric warn"><b>62%</b><span>заполненность профиля</span></span>
+  <span class="metric bad"><b>1 из 6</b><span>городов в топ-3 Map Pack</span></span>
+  <span class="metric bad"><b>17</b><span>отзывов (у лидера 140+)</span></span>
+  <span class="metric warn"><b>2</b><span>категории (нужно ≥5)</span></span>
+  <span class="metric bad"><b>NAP ≠</b><span>телефон разный на сайте и Yelp</span></span>
+  <p style="margin-top:14px">Главная проблема — <b>слабый prominence и неполный relevance</b>: мало отзывов и citations, не заполнены услуги и описание под целевые запросы, узкий набор категорий. При модели service-area в 6 метро один профиль физически «сильный» только в городе регистрации — в остальных городах добираем именно relevance и prominence, где на distance повлиять нельзя. Ниже — 12 находок и план.</p>
+</div>
+
+<h2>2. Находки по профилю</h2>
+<table>
+  <thead><tr><th>Блок</th><th>Находка</th><th>Приоритет</th></tr></thead>
+  <tbody>
+    <tr><td><b>Категории</b></td><td>Задана 1 основная + 1 доп. У конкурентов из топ-3 — 5–8 категорий (основная точнее: «Commercial refrigerator supplier», «Appliance repair service»). Узкий набор режет relevance по половине запросов.</td><td><span class="pill p-crit">критично</span></td></tr>
+    <tr><td><b>NAP-консистентность</b></td><td>Телефон на сайте, в GBP и на Yelp отличается (3 разных номера); название с суффиксом «LLC» то есть, то нет. Разнобой снижает доверие Google и путает атрибуцию звонков.</td><td><span class="pill p-crit">критично</span></td></tr>
+    <tr><td><b>Услуги (Services)</b></td><td>Раздел пуст. Не перечислены конкретные услуги («commercial oven repair», «ice machine repair», «walk-in cooler repair») с описаниями под ключевые запросы.</td><td><span class="pill p-crit">критично</span></td></tr>
+    <tr><td><b>Описание</b></td><td>Описание 180 символов из 750 доступных, без ключевых запросов и городов обслуживания. Упущенный сигнал relevance.</td><td><span class="pill p-warn">желательно</span></td></tr>
+    <tr><td><b>Отзывы</b></td><td>17 отзывов, средняя 4,3; ответы владельца только на 2. У лидера Map Pack — 140+ отзывов со свежими ответами. Prominence проседает сильнее всего.</td><td><span class="pill p-crit">критично</span></td></tr>
+    <tr><td><b>Service areas</b></td><td>Заданы 2 города из 6 реальных; зоны обслуживания не покрывают Houston и Dallas, где идёт работа. Google не показывает профиль там, где он не заявлен.</td><td><span class="pill p-crit">критично</span></td></tr>
+    <tr><td><b>Фото</b></td><td>9 фото, нет фото команды/выездов/оборудования и логотипа в высоком качестве; последнее добавлено 5 мес назад. Регулярность фото коррелирует с активностью профиля.</td><td><span class="pill p-warn">желательно</span></td></tr>
+    <tr><td><b>Posts (Google Updates)</b></td><td>Постов нет. Регулярные посты (офферы, кейсы) — дешёвый сигнал активности и охвата в профиле.</td><td><span class="pill p-warn">желательно</span></td></tr>
+    <tr><td><b>Q&amp;A</b></td><td>Раздел пуст. Не заданы owner-seeded вопросы (часы экстренного выезда, зоны, бренды оборудования).</td><td><span class="pill p-ok">по возможности</span></td></tr>
+    <tr><td><b>Citations</b></td><td>Профиль есть только в Google и Yelp. Нет BBB, Apple Maps, Bing Places, Angi и отраслевых foodservice-каталогов — недобор prominence и NAP-подтверждений.</td><td><span class="pill p-warn">желательно</span></td></tr>
+    <tr><td><b>Атрибуты</b></td><td>Не заполнены (способы оплаты, экстренный выезд 24/7, обслуживаемые бренды). Часть атрибутов участвует в фильтрах выдачи.</td><td><span class="pill p-ok">по возможности</span></td></tr>
+    <tr><td><b>Спам конкурентов</b></td><td>Два конкурента в Map Pack используют keyword-stuffing в названии («…Repair Best Cheap 24/7») — нарушение правил Google, кандидаты на Business Redressal Form (снятие даёт честный подъём позиций).</td><td><span class="pill p-warn">желательно</span></td></tr>
+  </tbody>
+</table>
+
+<h2>3. Позиции в Local Pack по городам</h2>
+<div class="card">
+  <p>Замер по запросу вида «commercial kitchen equipment repair {город}» (grid-проверка вокруг центра города):</p>
+  <table>
+    <thead><tr><th>Город</th><th>Позиция в Map Pack</th><th>Узкое место</th></tr></thead>
+    <tbody>
+      <tr><td>Город регистрации</td><td><span class="pill p-ok">#2</span></td><td>ок; добрать отзывы для #1</td></tr>
+      <tr><td>Метро №2</td><td><span class="pill p-warn">#7</span></td><td>relevance (нет услуг/категорий) + мало отзывов</td></tr>
+      <tr><td>Метро №3</td><td><span class="pill p-warn">#9</span></td><td>distance + не задана service area</td></tr>
+      <tr><td>Метро №4–6</td><td><span class="pill p-crit">вне топ-20</span></td><td>город не заявлен в зонах + нет citations</td></tr>
+    </tbody>
+  </table>
+  <p class="sub">Вывод: где недобрать distance (далёкие метро) — компенсируем relevance (категории, услуги, описание с гео), prominence (отзывы, citations) и, при необходимости, отдельными локальными лендингами под каждый город.</p>
+</div>
+
+<h2>4. Приоритизированный план роста</h2>
+<div class="card">
+  <p><span class="step">Неделя 1 — фундамент (relevance):</span> починить NAP на всех площадках; расширить категории до 5–8; заполнить Services со всеми услугами и описаниями; переписать описание 750 симв с ключами и городами; задать все 6 service areas.</p>
+  <p><span class="step">Неделя 2 — доверие (prominence):</span> запустить систему сбора отзывов (ссылка-запрос клиентам после выезда, цель +8–10/мес), ответить на все текущие; добавить 15–20 фото (команда, выезды, оборудование, лого); 4 поста.</p>
+  <p><span class="step">Недели 3–4 — охват:</span> citations в BBB, Apple Maps, Bing Places, Angi + 3–4 отраслевых foodservice-каталога с единым NAP; owner-seeded Q&amp;A; подать Redressal на спам-конкурентов; при слабых метро — отдельные локальные страницы на сайте под каждый город.</p>
+</div>
+
+<h2>5. Метрики, по которым отслеживаем эффект</h2>
+<div class="card">
+  <ul>
+    <li><b>Позиции в Map Pack</b> по целевым запросам в каждом из 6 городов (grid-замер до/после).</li>
+    <li><b>Действия в профиле</b> (GBP Insights): звонки, запросы маршрута, клики на сайт, сообщения.</li>
+    <li><b>Отзывы</b>: количество, средняя оценка, доля отвеченных, свежесть.</li>
+    <li><b>Citations</b>: число площадок с корректным NAP.</li>
+    <li><b>Заявки с профиля</b> — итоговая бизнес-метрика (звонки/сообщения → сделки).</li>
+  </ul>
+</div>
+
+<footer>
+  Образец демонстрирует формат и подход. На вашем проекте цифры — из реального профиля, Google Maps по вашим городам и анализа конкурентов в Local Pack. Итог сдаю документом (таблица находок по каждому городу + пошаговый план + метрики), при необходимости беру дальнейшую оптимизацию и сопровождение. — Никита Цветков
+</footer>
+</div>
+</body>
+</html>

@@ -1,0 +1,39 @@
+<!doctype html><html lang=ru><meta charset=utf-8>
+<meta name=viewport content="width=device-width,initial-scale=1">
+<title>Сбор логистических компаний для e-commerce — демо-сэмпл</title>
+<style>body{font:15px/1.5 system-ui,Arial;margin:0;background:#f5f6f8;color:#1a1a1a}
+.wrap{max-width:1080px;margin:0 auto;padding:24px}
+h1{font-size:22px} .sub{color:#555}
+table{border-collapse:collapse;width:100%;background:#fff;font-size:13px;box-shadow:0 1px 4px #0001}
+th,td{border:1px solid #e3e3e3;padding:7px 9px;text-align:left;vertical-align:top}
+th{background:#1f3a5f;color:#fff;position:sticky;top:0}
+tr:nth-child(even) td{background:#fafbfc}
+.method{background:#fff;border-left:4px solid #1f3a5f;padding:12px 16px;margin:16px 0;box-shadow:0 1px 4px #0001}
+code{background:#eef;padding:1px 5px;border-radius:3px} .b{color:#0a7d32;font-weight:600}</style>
+<div class=wrap>
+<h1>Сбор и систематизация: логистические компании для e-commerce</h1>
+<p class=sub>Демо-сэмпл методики (9 записей). Полный сбор — по согласованному ТЗ.
+Формат единый, без дублей, с проверкой актуальности.</p>
+<div class=method>
+<b>Методика:</b>
+<ol>
+<li>Источники: офиц. сайты, бизнес-каталоги, публичные справочники.</li>
+<li>Поля по каждой компании: название, страна, города, услуги, контакты, ссылка.</li>
+<li><b class=b>Унификация услуг</b> к единому словарю (courier / pvz / warehouse / fulfillment / cargo / intl) — формулировки приведены к одному виду для анализа.</li>
+<li><b class=b>Дедуп</b> по нормализованному названию: дублей в выборке — 0.</li>
+<li><b class=b>Проверка актуальности</b>: пинг офиц. домена; устаревшие/слитые бренды помечаются. Пример — Boxberry теперь под Яндекс.Доставкой (boxberry.ru → редирект).</li>
+</ol>
+</div>
+<table><thead><tr><th>Название</th><th>Страна</th><th>Города присутствия</th><th>Услуги (унифиц.)</th><th>Офиц. сайт / контакт</th><th>Проверка актуальности</th></tr></thead><tbody>
+<tr><td>СДЭК</td><td>Россия</td><td>Москва, СПб, Екатеринбург, Новосибирск (3000+ городов РФ/СНГ)</td><td>courier; pvz; warehouse; fulfillment; intl</td><td>https://www.cdek.ru</td><td>активен (200)</td></tr>
+<tr><td>Boxberry</td><td>Россия</td><td>Москва, СПб + сеть ПВЗ РФ</td><td>courier; pvz; fulfillment</td><td>https://dostavka.yandex.ru/boxberry-site/</td><td>АКТУАЛИЗИРОВАНО: boxberry.ru → редирект на Яндекс.Доставку (бренд влился в Яндекс)</td></tr>
+<tr><td>Почта России</td><td>Россия</td><td>вся РФ (42000+ отделений)</td><td>courier; pvz; warehouse; intl</td><td>https://www.pochta.ru</td><td>активен (домен жив, 417 на HEAD-проба)</td></tr>
+<tr><td>DPD</td><td>Россия</td><td>Москва, СПб + регионы РФ</td><td>courier; pvz; cargo; intl</td><td>https://www.dpd.ru</td><td>активен (403 anti-bot, домен жив)</td></tr>
+<tr><td>PONY EXPRESS</td><td>Россия</td><td>Москва, СПб + регионы</td><td>courier; warehouse; fulfillment; intl</td><td>https://www.pony.ru</td><td>проверить на отправке</td></tr>
+<tr><td>Деловые Линии</td><td>Россия</td><td>Москва, СПб + 200+ городов</td><td>cargo; warehouse; courier</td><td>https://www.dellin.ru</td><td>проверить на отправке</td></tr>
+<tr><td>СберЛогистика</td><td>Россия</td><td>Москва + сеть РФ</td><td>courier; pvz; fulfillment; cargo</td><td>https://sberlogistics.ru</td><td>проверить на отправке</td></tr>
+<tr><td>Яндекс Доставка</td><td>Россия</td><td>Москва, СПб + 1000+ городов</td><td>courier; pvz; fulfillment; intl</td><td>https://dostavka.yandex.ru</td><td>активен</td></tr>
+<tr><td>5Post (X5)</td><td>Россия</td><td>сеть постаматов/ПВЗ в магазинах X5</td><td>pvz; fulfillment</td><td>https://5post.ru</td><td>проверить на отправке</td></tr>
+</tbody></table>
+<p class=sub style=margin-top:16px>Выгрузка: <code>logistics-companies-sample.csv</code> (UTF-8 BOM, разделитель «;» — открывается в Excel напрямую). Никита Цветков.</p>
+</div></html>

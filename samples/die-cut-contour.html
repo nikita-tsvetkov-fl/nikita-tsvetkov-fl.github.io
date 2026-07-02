@@ -1,0 +1,63 @@
+<!doctype html><html lang="ru"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Контур реза по картинке (die-cut / kiss-cut) — образец — Никита Цветков</title>
+<style>
+body{margin:0;font-family:-apple-system,Segoe UI,Roboto,Arial,sans-serif;background:#0d1117;color:#e6edf3;line-height:1.55}
+.wrap{max-width:900px;margin:0 auto;padding:28px 20px}
+a{color:#2f81f7;text-decoration:none}a:hover{text-decoration:underline}
+h1{font-size:23px;margin:0 0 6px}h2{font-size:17px;margin:26px 0 8px;border-bottom:1px solid #30363d;padding-bottom:4px}
+p{color:#c2ccd6;font-size:14px}.muted{color:#9da7b3;font-size:13px}
+table{border-collapse:collapse;width:100%;margin-top:12px;font-size:13px}
+th,td{border:1px solid #30363d;padding:8px 10px;text-align:left;vertical-align:top}
+th{background:#161b22}
+ul{font-size:14px;color:#c2ccd6}li{margin:4px 0}
+.tag{display:inline-block;background:#1f6feb22;border:1px solid #1f6feb55;color:#79c0ff;font-size:11px;padding:1px 8px;border-radius:10px;margin-left:6px}
+.box{background:#161b22;border:1px solid #30363d;border-radius:8px;padding:14px 16px;margin-top:12px}
+code{background:#161b22;border:1px solid #30363d;border-radius:4px;padding:1px 5px;font-size:12px}
+.grid{display:flex;gap:16px;flex-wrap:wrap;margin-top:12px}
+.grid figure{margin:0;flex:1 1 380px}
+.grid img{width:100%;border:1px solid #30363d;border-radius:8px;background:#fff}
+figcaption{font-size:12px;color:#9da7b3;margin-top:6px}
+</style></head><body><div class="wrap">
+<p><a href="../">&larr; Назад в портфолио</a></p>
+<h1>Контур реза по картинке (die-cut / kiss-cut) <span class="tag">рабочий образец</span></h1>
+<p class="muted">Задача из печати наклеек/стикеров: по растровому макету (PNG/JPG) автоматически построить замкнутый контур реза для плоттера/станка, в реальных миллиметрах. Ниже — реальный прогон моего движка на тестовом макете с двумя объектами. Зависимости только numpy + Pillow (зеро-инсталл, без OpenCV); в проде сегментацию легко заменить на OpenCV — интерфейс тот же.</p>
+
+<h2>1. Вход → результат</h2>
+<div class="grid">
+<figure>
+  <img src="die-cut-input.png" alt="Исходный макет">
+  <figcaption>Исходный макет: два объекта на фоне. У одного есть готовая kiss-cut кайма (белая обводка), у второго — нет.</figcaption>
+</figure>
+<figure>
+  <img src="die-cut-preview.png" alt="Контур реза наложен">
+  <figcaption>Контур реза наложен для проверки глазами. По объекту с каймой рез ведётся ПО кайме; по объекту без каймы — силуэт + наружный отступ 3&nbsp;мм (bleed).</figcaption>
+</figure>
+</div>
+
+<h2>2. Что движок определил сам</h2>
+<table>
+<thead><tr><th>Объект</th><th>Режим реза</th><th>Точек в контуре</th></tr></thead>
+<tbody>
+<tr><td>Объект 1</td><td>kiss-cut — по готовой кайме</td><td>37</td></tr>
+<tr><td>Объект 2</td><td>силуэт + отступ 3&nbsp;мм (каймы нет)</td><td>25</td></tr>
+</tbody>
+</table>
+<p class="muted">Размер привязан к реальности через DPI: макет 900&times;600&nbsp;px при 150&nbsp;DPI = 152.4&times;101.6&nbsp;мм. Контур сглаживается (без рваных зубцов) и упрощается (Дуглас–Пекер), чтобы плоттер резал чисто.</p>
+
+<h2>3. На выходе</h2>
+<ul>
+<li><b>SVG для плоттера/станка</b> — контуры в миллиметрах: <a href="die-cut-contour.svg" target="_blank">die-cut-contour.svg</a></li>
+<li><b>PNG-превью</b> с наложенными линиями — для визуальной проверки оператором.</li>
+<li><b>JSON</b> — координаты контуров + метаданные (DPI, мм, режим по каждому объекту) для интеграции в пайплайн.</li>
+</ul>
+
+<h2>4. Что закрываю под задачу</h2>
+<ul>
+<li>kiss-cut по существующей кайме и die-cut силуэтом для макетов без каймы;</li>
+<li>несколько рисунков на одном изображении → отдельный контур на каждый;</li>
+<li>настраиваемый отступ (bleed) в мм и DPI под параметры печати;</li>
+<li>батч-обработка папки макетов, выгрузка в формате под конкретный плоттер/станок.</li>
+</ul>
+<p class="muted">Под ваш парк оборудования и формат макетов подгоняю вывод и допуски. Работаю на ваших файлах и по вашим требованиям к резу.</p>
+</div></body></html>

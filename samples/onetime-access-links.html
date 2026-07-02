@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Одноразовые ссылки доступа · aiogram + SQLAlchemy · Никита Цветков</title>
+<style>
+  :root{--bg:#0f1117;--card:#171a23;--ink:#e7e9ee;--mut:#9aa3b2;--acc:#5b8def;--ok:#3ecf8e}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.6 -apple-system,Segoe UI,Roboto,sans-serif;padding:0 18px}
+  .wrap{max-width:860px;margin:0 auto;padding:42px 0 70px}
+  h1{font-size:25px;margin:0 0 6px}
+  .sub{color:var(--mut);margin:0 0 26px}
+  h2{font-size:18px;margin:34px 0 12px;border-bottom:1px solid #262a36;padding-bottom:7px}
+  .card{background:var(--card);border:1px solid #232735;border-radius:12px;padding:18px 20px;margin:14px 0}
+  table{width:100%;border-collapse:collapse;font-size:14.5px}
+  td,th{text-align:left;padding:8px 10px;border-bottom:1px solid #232735;vertical-align:top}
+  th{color:var(--mut);font-weight:600}
+  code,pre{font-family:ui-monospace,SFMono-Regular,Menlo,monospace}
+  pre{background:#0b0d13;border:1px solid #232735;border-radius:10px;padding:14px 16px;overflow:auto;font-size:13px;line-height:1.5}
+  .ok{color:var(--ok)}
+  .pill{display:inline-block;background:#11261c;color:var(--ok);border:1px solid #1f4a36;border-radius:999px;padding:2px 11px;font-size:12.5px;margin-left:8px}
+  .mut{color:var(--mut)}
+  a{color:var(--acc)}
+  .k{color:#c792ea}.s{color:#c3e88d}.c{color:#637777}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Одноразовые ссылки доступа с привязкой к user_id<span class="pill">7/7 тестов зелёные</span></h1>
+  <p class="sub">Модуль под Telegram-систему «несколько ботов через общую БД» · Python · aiogram 3.x · SQLAlchemy 2.0 · PostgreSQL</p>
+
+  <div class="card">
+    <b>Задача.</b> В многоботовой системе (Garant / Portal / Admin) один бот выдаёт
+    ссылку-приглашение в закрытый чат сделки, другой её гасит. Ссылка должна срабатывать
+    <b>ровно один раз</b>, быть <b>привязана к конкретному user_id</b> и иметь срок жизни.
+    Это типовое «узкое место» таких систем — ниже рабочая, проверенная реализация именно этого узла.
+  </div>
+
+  <h2>Гарантируемые свойства</h2>
+  <div class="card" style="padding:4px 8px">
+  <table>
+    <tr><th>Свойство</th><th>Как обеспечено</th></tr>
+    <tr><td>Одноразовость без гонок</td><td>Атомарный <code>UPDATE … WHERE redeemed_at IS NULL</code> — при двух одновременных кликах выигрывает ровно один</td></tr>
+    <tr><td>Привязка к user_id</td><td>Поле <code>bound_user_id</code>; перехваченная чужим ссылка → отказ <code>wrong_user</code></td></tr>
+    <tr><td>Срок жизни (TTL)</td><td><code>expires_at</code>, проверка при погашении</td></tr>
+    <tr><td>Устойчивость к утечке БД</td><td>В таблице только <code>sha256(token)</code> — не сам токен</td></tr>
+    <tr><td>Стойкость к подбору</td><td>Токен = 256 бит из <code>secrets.token_urlsafe</code></td></tr>
+    <tr><td>SQLite ↔ PostgreSQL</td><td>Бэкенд-агностичная логика, смена одной строки DSN</td></tr>
+  </table>
+  </div>
+
+  <h2>Ядро: атомарное погашение (race-safe)</h2>
+  <pre><span class="c"># выигрывает ровно один параллельный /start — двойной вход невозможен</span>
+stmt = (
+    <span class="k">update</span>(AccessLink)
+    .where(
+        AccessLink.token_hash == token_hash,
+        AccessLink.redeemed_at.<span class="k">is_</span>(<span class="k">None</span>),
+    )
+    .values(redeemed_at=now, redeemed_by=user_id)
+)
+res = s.execute(stmt)
+s.commit()
+<span class="k">return</span> RedeemResult(<span class="k">True</span>, <span class="s">"ok"</span>) <span class="k">if</span> res.rowcount == <span class="s">1</span> <span class="k">else</span> RedeemResult(<span class="k">False</span>, <span class="s">"already_used"</span>)</pre>
+
+  <h2>Подключение в aiogram 3.x (Portal Bot)</h2>
+  <pre><span class="k">@router.message</span>(CommandStart(deep_link=<span class="k">True</span>))
+<span class="k">async def</span> <span class="s">on_start</span>(message, command):
+    res = svc.redeem(command.args, user_id=message.from_user.id)
+    <span class="k">if</span> res.ok:
+        <span class="c"># res.resource == "chat:-100…" → выдаём доступ</span>
+        <span class="k">await</span> message.answer(<span class="s">"Доступ открыт ✅"</span>)
+    <span class="k">else</span>:
+        <span class="k">await</span> message.answer(_human(res.reason))  <span class="c"># понятная причина отказа</span></pre>
+
+  <h2>Прогон тестов</h2>
+  <pre class="ok">  PASS  test_concurrent_redeem_only_one_wins   <span class="c"># 20 потоков, 1 победитель</span>
+  PASS  test_expiry
+  PASS  test_happy_redeem
+  PASS  test_open_link_any_user
+  PASS  test_single_use
+  PASS  test_unknown_token
+  PASS  test_user_binding
+
+7/7 зелёных.</pre>
+
+  <p class="mut" style="margin-top:30px">Это образец компетенции под доработку вашей системы из 5 ботов: тот же стек, та же
+  архитектура общей БД. Полный код (engine.py / bot_handler.py / test_engine.py) передаю по запросу.
+  — Никита Цветков</p>
+</div>
+</body>
+</html>

@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Каталог-скрапер · товарные страницы → CSV</title>
+<style>
+  :root{--bg:#0f1115;--card:#181b22;--line:#272c37;--txt:#eef1f6;--muted:#9aa4b2;--accent:#2ea6ff;--ok:#39d98a;--warn:#ffb454}
+  *{box-sizing:border-box}
+  body{margin:0;font:15px/1.55 -apple-system,Segoe UI,Roboto,Arial,sans-serif;background:var(--bg);color:var(--txt)}
+  .wrap{max-width:920px;margin:0 auto;padding:26px 18px 60px}
+  h1{font-size:23px;margin:0 0 4px}
+  .sub{color:var(--muted);margin:0 0 22px}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px 20px;margin:14px 0}
+  h2{font-size:16px;margin:0 0 10px;color:var(--accent)}
+  .flow{display:flex;flex-wrap:wrap;gap:8px;align-items:center;font-size:13px}
+  .step{background:#0f1115;border:1px solid var(--line);border-radius:9px;padding:7px 11px}
+  .arr{color:var(--muted)}
+  .two{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+  @media(max-width:680px){.two{grid-template-columns:1fr}}
+  ul{margin:6px 0 0;padding-left:18px}li{margin:3px 0}
+  .tag{display:inline-block;font-size:11px;padding:2px 8px;border-radius:6px;margin-right:6px}
+  .ld{background:#10331f;color:var(--ok)} .mi{background:#332a10;color:var(--warn)}
+  table{width:100%;border-collapse:collapse;font-size:12.5px;margin-top:8px;display:block;overflow-x:auto}
+  th,td{border:1px solid var(--line);padding:6px 9px;text-align:left;white-space:nowrap}
+  th{background:#0f1115;color:var(--muted);position:sticky;top:0}
+  code{background:#0f1115;border:1px solid var(--line);border-radius:5px;padding:1px 5px;font-size:12.5px}
+  .note{font-size:12.5px;color:var(--muted)}
+  a{color:var(--accent)}
+  .pill{font-size:12px;color:var(--ok);border:1px solid #1c4; border-radius:999px;padding:2px 10px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Каталог-скрапер: товарные страницы → структурированный CSV</h1>
+  <p class="sub">Сбор данных товаров (e-commerce) в чистую таблицу. Устойчив к анти-боту и к смене вёрстки.</p>
+
+  <div class="card">
+    <h2>Как устроено — два слоя</h2>
+    <div class="flow">
+      <span class="step">листинг категории</span><span class="arr">→</span>
+      <span class="step">ссылки на товары</span><span class="arr">→</span>
+      <span class="step"><b>FETCH</b>-слой</span><span class="arr">→</span>
+      <span class="step"><b>PARSE</b>-каскад</span><span class="arr">→</span>
+      <span class="step">CSV / Excel / JSON</span>
+    </div>
+    <div class="two" style="margin-top:14px">
+      <div>
+        <b>FETCH-слой (откуда берём HTML) — подключаемый:</b>
+        <ul>
+          <li><b>http</b> — обычный запрос для открытых сайтов;</li>
+          <li><b>residential</b> — рендер через реальное устройство / резидентный канал
+          для сайтов за <b>Akamai / Cloudflare</b>. Пример: <code>hm.com</code> отдаёт
+          датацентр-IP <code>403 Access Denied</code> — наивный парсер тут падает,
+          residential-канал проходит. Парсер при этом тот же.</li>
+        </ul>
+      </div>
+      <div>
+        <b>PARSE-каскад (как достаём поля) — по убыванию надёжности:</b>
+        <ul>
+          <li><span class="tag ld">1</span> JSON-LD <code>schema.org/Product</code></li>
+          <li><span class="tag mi">2</span> микроразметка <code>itemprop</code> + таблица атрибутов</li>
+          <li><span class="tag mi">3</span> OpenGraph / мета-теги</li>
+        </ul>
+        <p class="note">Не завязан на один хрупкий CSS-селектор — если сайт меняет вёрстку,
+        сбор не ломается.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>Живой прогон <span class="pill">воспроизводимо</span></h2>
+    <p class="note">Реальный сбор каталога (категория «Mystery») в один проход. Поля: название,
+      артикул, цена, валюта, наличие, категория, ссылка. Ниже — фактический результат,
+      полный файл: <a href="catalog-scraper-sample.csv">catalog-scraper-sample.csv</a>.</p>
+    <table>
+      <tr><th>Название</th><th>Артикул</th><th>Цена</th><th>Вал.</th><th>Наличие</th><th>Категория</th></tr>
+      <tr><td>Sharp Objects</td><td>e00eb4fd7b871a48</td><td>47.82</td><td>£</td><td>In stock (20)</td><td>Books</td></tr>
+      <tr><td>In a Dark, Dark Wood</td><td>19ed25f4641d5efd</td><td>19.63</td><td>£</td><td>In stock (18)</td><td>Books</td></tr>
+      <tr><td>The Past Never Ends</td><td>5ee94540d0749ea0</td><td>56.50</td><td>£</td><td>In stock (16)</td><td>Books</td></tr>
+      <tr><td>A Murder in Time</td><td>—</td><td>16.64</td><td>£</td><td>In stock</td><td>Books</td></tr>
+      <tr><td>The Murder of Roger Ackroyd</td><td>—</td><td>44.10</td><td>£</td><td>In stock</td><td>Books</td></tr>
+      <tr><td colspan="6" class="note">… всего 12 строк в выгрузке</td></tr>
+    </table>
+  </div>
+
+  <div class="card">
+    <h2>Что получает заказчик</h2>
+    <ul>
+      <li>выгрузка в <b>CSV / Excel / JSON</b> по согласованному набору полей;</li>
+      <li>дедупликация и лог ошибок (битые карточки не роняют прогон);</li>
+      <li>разовый сбор или <b>регулярное обновление по расписанию</b>;</li>
+      <li>для защищённых сайтов — сбор через residential-канал без банов и капч.</li>
+    </ul>
+  </div>
+
+  <p class="note"><a href="../">← портфолио</a> · технологии: Python · httpx · резидентный рендер (CDP) · каскадный парсер JSON-LD/микроразметка</p>
+</div>
+</body>
+</html>

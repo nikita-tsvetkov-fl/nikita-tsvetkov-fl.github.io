@@ -1,0 +1,113 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>RAG-бот по базе знаний — демо | Nikita Tsvetkov</title>
+<meta name="description" content="Демо RAG: вопрос к базе знаний → ответ со ссылками на источники. Retrieval-Augmented Generation для чат-ботов поддержки и ассистентов по документации.">
+<style>
+:root{--bg:#0d1117;--card:#161b22;--line:#30363d;--text:#e6edf3;--mut:#9da7b3;--acc:#2f81f7;--ok:#3fb950;--warn:#d29922}
+*{box-sizing:border-box}
+body{margin:0;font-family:-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;background:var(--bg);color:var(--text);line-height:1.6}
+.wrap{max-width:820px;margin:0 auto;padding:0 18px 60px}
+header{padding:36px 0 12px}
+h1{margin:0 0 6px;font-size:26px}
+.tag{color:var(--mut);margin:0;font-size:16px}
+a{color:var(--acc);text-decoration:none}a:hover{text-decoration:underline}
+.back{display:inline-block;margin:18px 0 8px;font-size:14px}
+.panel{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:18px;margin-top:18px}
+h2{font-size:17px;margin:0 0 12px}
+.kb{font-size:13px;color:var(--mut)}
+.kb b{color:var(--text)}
+.qs{display:flex;flex-wrap:wrap;gap:8px;margin:4px 0 6px}
+.q{background:#1c2230;border:1px solid var(--line);border-radius:20px;padding:7px 14px;font-size:13px;cursor:pointer;color:var(--text)}
+.q:hover{border-color:var(--acc)}
+.q.active{border-color:var(--acc);background:#13233f}
+.ask{display:flex;gap:8px;margin-top:10px}
+.ask input{flex:1;background:#0d1117;border:1px solid var(--line);border-radius:8px;color:var(--text);padding:9px 12px;font-size:14px}
+.ask button{background:var(--acc);border:0;border-radius:8px;color:#fff;padding:0 16px;font-size:14px;cursor:pointer}
+.answer{margin-top:6px}
+.answer .a{background:#0d1117;border:1px solid var(--line);border-left:3px solid var(--ok);border-radius:8px;padding:12px 14px;font-size:15px}
+.lbl{font-size:12px;text-transform:uppercase;letter-spacing:.05em;color:var(--mut);margin:14px 0 6px}
+.cite{font-size:13px;color:var(--mut);padding:3px 0}
+.cite code{color:var(--acc)}
+.hit{font-size:12.5px;color:var(--mut);background:#0d1117;border:1px solid var(--line);border-radius:8px;padding:8px 10px;margin:6px 0}
+.hit .src{color:var(--acc)}
+.note{font-size:12.5px;color:var(--warn);margin-top:8px}
+.flow{font-size:13px;color:var(--mut);margin:0;padding-left:18px}
+.flow li{margin:3px 0}
+.flow b{color:var(--text)}
+footer{margin-top:34px;color:var(--mut);font-size:12.5px;border-top:1px solid var(--line);padding-top:14px}
+</style>
+</head>
+<body>
+<div class="wrap">
+<a class="back" href="../../">← к портфолио</a>
+<header>
+  <h1>RAG-бот по базе знаний — живое демо</h1>
+  <p class="tag">Вопрос → поиск по документам → ответ <b>со ссылками на источники</b>. Под чат-ботов поддержки, ассистентов по внутренней документации и FAQ.</p>
+</header>
+
+<div class="panel">
+  <h2>База знаний</h2>
+  <p class="kb" id="kb">Загрузка…</p>
+  <p class="note">Ответы ниже — реальный вывод движка (<code>tools/rag_demo.py</code>) по этой базе. Кнопки = заранее посчитанные примеры; поле ввода ищет среди тех же вопросов.</p>
+</div>
+
+<div class="panel">
+  <h2>Спросите базу знаний</h2>
+  <div class="qs" id="qs"></div>
+  <div class="ask">
+    <input id="inp" placeholder="напишите вопрос (см. примеры выше)…" autocomplete="off">
+    <button id="go">Спросить</button>
+  </div>
+  <div class="answer" id="ans"></div>
+</div>
+
+<div class="panel">
+  <h2>Как это работает</h2>
+  <ol class="flow">
+    <li><b>Ingest</b> — читает .txt / .md / .pdf (PDF через pdfplumber, сканы — с OCR).</li>
+    <li><b>Chunk</b> — режет по границам предложений с перекрытием, контекст не рвётся.</li>
+    <li><b>Index</b> — TF-IDF + лёгкий RU/EN стеммер, косинусная близость (офлайн, без ключей).</li>
+    <li><b>Retrieve</b> — top-k фрагментов с оценкой и ссылкой на файл-источник.</li>
+    <li><b>Answer</b> — ответ из найденного + цитаты. Нет в базе → честно «не нашлось».</li>
+  </ol>
+  <p class="note" style="color:var(--mut)">Это retrieval-слой (лексический, офлайн). В боевом проекте эмбеддинги меняются на семантические (Anthropic / OpenAI), а ответ — на вызов LLM с найденным контекстом и инструкцией «отвечай только по источникам». Архитектура та же; векторное хранилище масштабируется на FAISS / pgvector / Qdrant.</p>
+</div>
+
+<footer>
+  Никита Цветков — разработка ИИ-ассистентов, ботов и автоматизаций. Оплата USDT / BTC, через эскроу.
+</footer>
+</div>
+
+<script>
+let DATA=null;
+function norm(s){return s.toLowerCase().replace(/[^a-zа-яё0-9 ]/gi,' ').replace(/\s+/g,' ').trim();}
+function render(item){
+  const a=document.getElementById('ans');
+  if(!item){a.innerHTML='<div class="note" style="color:var(--mut)">Не нашёл такой вопрос в демо-наборе — нажмите один из примеров выше.</div>';return;}
+  let h='<div class="lbl">Ответ</div><div class="a">'+item.answer+'</div>';
+  h+='<div class="lbl">Источники</div>';
+  item.citations.forEach(c=>{h+='<div class="cite">'+c.replace(/\[(\d+)\]/,'<code>[$1]</code>')+'</div>';});
+  h+='<div class="lbl">Найденные фрагменты (retrieval)</div>';
+  item.hits.forEach(ht=>{h+='<div class="hit"><span class="src">'+ht.source+'</span> · фрагмент '+ht.part+' · score '+ht.score+'<br>'+ht.text+'…</div>';});
+  a.innerHTML=h;
+}
+function pick(q){
+  document.querySelectorAll('.q').forEach(e=>e.classList.toggle('active',e.dataset.q===q));
+  const item=DATA.qa.find(x=>x.q===q)||DATA.qa.find(x=>norm(x.q).includes(norm(q))&&norm(q).length>3);
+  render(item);
+}
+fetch('demo_data.json').then(r=>r.json()).then(d=>{
+  DATA=d;
+  document.getElementById('kb').innerHTML='<b>'+d.meta.docs+'</b> документа, <b>'+d.meta.chunks+'</b> фрагментов: '+d.meta.files.map(f=>'<code>'+f+'</code>').join(', ')+' — справка вымышленной CRM «AquaFlow» (тарифы, интеграции, поддержка/безопасность).';
+  const qs=document.getElementById('qs');
+  d.qa.forEach(x=>{const b=document.createElement('button');b.className='q';b.textContent=x.q;b.dataset.q=x.q;b.onclick=()=>{document.getElementById('inp').value=x.q;pick(x.q);};qs.appendChild(b);});
+  pick(d.qa[0].q);
+});
+document.getElementById('go').onclick=()=>pick(document.getElementById('inp').value.trim());
+document.getElementById('inp').addEventListener('keydown',e=>{if(e.key==='Enter')pick(e.target.value.trim());});
+</script>
+</body>
+</html>

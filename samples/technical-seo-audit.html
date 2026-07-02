@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Технический SEO-аудит + ТЗ для программиста — образец работы</title>
+<style>
+  :root{--bg:#0f1320;--card:#171c2e;--ink:#e8ecf6;--mut:#9aa6c4;--acc:#5b8cff;--ok:#37c98a;--warn:#ffb84d;--crit:#ff6b6b;--line:#283050}
+  *{box-sizing:border-box}
+  body{margin:0;font:16px/1.6 -apple-system,Segoe UI,Roboto,Arial,sans-serif;background:var(--bg);color:var(--ink)}
+  .wrap{max-width:940px;margin:0 auto;padding:32px 20px 80px}
+  header{border-bottom:1px solid var(--line);padding-bottom:20px;margin-bottom:28px}
+  .tag{display:inline-block;font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--acc);border:1px solid var(--acc);border-radius:20px;padding:3px 12px;margin-bottom:14px}
+  h1{font-size:27px;margin:0 0 8px}
+  h2{font-size:21px;margin:38px 0 14px}
+  h3{font-size:17px;margin:22px 0 8px}
+  .sub{color:var(--mut);font-size:15px}
+  .note{background:#1b2138;border:1px solid var(--line);border-left:3px solid var(--acc);border-radius:8px;padding:12px 16px;color:var(--mut);font-size:14px;margin:18px 0}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:18px 20px;margin:14px 0}
+  table{width:100%;border-collapse:collapse;margin:14px 0;font-size:14px}
+  th,td{text-align:left;padding:9px 12px;border-bottom:1px solid var(--line);vertical-align:top}
+  th{color:var(--mut);font-weight:600;font-size:13px;text-transform:uppercase;letter-spacing:.04em}
+  .pill{display:inline-block;font-size:12px;font-weight:700;border-radius:6px;padding:2px 9px;white-space:nowrap}
+  .p-crit{background:rgba(255,107,107,.15);color:var(--crit)}
+  .p-warn{background:rgba(255,184,77,.15);color:var(--warn)}
+  .p-ok{background:rgba(55,201,138,.15);color:var(--ok)}
+  .metric{display:inline-flex;flex-direction:column;align-items:flex-start;background:#0c1020;border:1px solid var(--line);border-radius:8px;padding:10px 16px;margin:4px 8px 4px 0}
+  .metric b{font-size:22px}.metric.bad b{color:var(--crit)}.metric.ok b{color:var(--ok)}.metric.warn b{color:var(--warn)}
+  .metric span{font-size:12px;color:var(--mut)}
+  code{background:#0c1020;padding:1px 6px;border-radius:4px;color:#9fc1ff;font-size:13px}
+  pre{background:#0c1020;border:1px solid var(--line);border-radius:8px;padding:14px 16px;overflow:auto;font-size:13px;color:#cfe0ff}
+  ul{margin:8px 0;padding-left:20px}li{margin:5px 0}
+  footer{margin-top:50px;border-top:1px solid var(--line);padding-top:18px;color:var(--mut);font-size:13px}
+  .tz td:first-child{font-weight:600}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header>
+  <span class="tag">Образец работы · Технический SEO-аудит</span>
+  <h1>Технический SEO-аудит сайта + ТЗ для программиста</h1>
+  <p class="sub">Демонстрационный пример формата и глубины. Сайт-образец: интернет-магазин на условном движке (учебный кейс, не реальный клиент). Семантику здесь не собираем — фокус только на технике и готовом задании для разработчика.</p>
+</header>
+
+<div class="note">
+  <b>Зачем документ.</b> Показывает, как я сдаю технический SEO-аудит: каждая находка → влияние на индексацию/ранжирование → конкретная правка с приоритетом → и, главное, <b>готовое ТЗ для программиста</b> (что именно и в каком файле менять), чтобы разработчик внедрил без переспросов. На реальном проекте все цифры — с краулинга вашего сайта и данных Search Console / Яндекс.Вебмастера.
+</div>
+
+<h2>1. Сводка здоровья сайта</h2>
+<div class="card">
+  <span class="metric bad"><b>312</b><span>страниц в индексе</span></span>
+  <span class="metric bad"><b>1 040</b><span>страниц найдено краулером</span></span>
+  <span class="metric warn"><b>4,1 с</b><span>LCP (моб.), порог 2,5</span></span>
+  <span class="metric bad"><b>187</b><span>битых ссылок (404)</span></span>
+  <span class="metric warn"><b>0</b><span>страниц со Schema.org</span></span>
+  <p style="margin-top:14px">Главная проблема — <b>раздувание индексации</b>: в индекс попадают фильтры, сортировки и UTM-дубли (728 «мусорных» URL против 312 нужных). Это размывает краулинговый бюджет и каннибализирует ранжирование карточек. Плюс нет микроразметки (потеря расширенных сниппетов) и медленная загрузка на мобильных. Ниже — 14 находок и готовое ТЗ.</p>
+</div>
+
+<h2>2. Находки по категориям</h2>
+<table>
+  <thead><tr><th>Категория</th><th>Находка (с опорой на данные краулинга/Вебмастера)</th><th>Приоритет</th></tr></thead>
+  <tbody>
+    <tr><td><b>Индексация</b></td><td>728 URL фильтров/сортировок (<code>?filter=</code>, <code>?sort=</code>) открыты к индексации, нет <code>canonical</code> на основную категорию. Дубли в выдаче.</td><td><span class="pill p-crit">критично</span></td></tr>
+    <tr><td><b>robots.txt</b></td><td>Нет запрета на параметрические URL; <code>Sitemap:</code> не указан; закрыт <code>/static/</code> с CSS — Googlebot не может отрендерить.</td><td><span class="pill p-crit">критично</span></td></tr>
+    <tr><td><b>Sitemap.xml</b></td><td>Статичный, last updated 2 мес назад, содержит 404 и редиректы; не разбит по типам (товары/категории/блог).</td><td><span class="pill p-warn">желательно</span></td></tr>
+    <tr><td><b>Canonical</b></td><td>На карточках товара canonical ссылается сам на себя при наличии вариаций (цвет/размер) → дубли. Пагинация без <code>rel=canonical</code> на 1-ю страницу.</td><td><span class="pill p-crit">критично</span></td></tr>
+    <tr><td><b>Скорость (Core Web Vitals)</b></td><td>LCP 4,1 с (моб.): незажатые изображения (нет WebP, нет <code>loading=lazy</code>), рендер-блокирующий JS в <code>&lt;head&gt;</code>, нет кэш-заголовков.</td><td><span class="pill p-crit">критично</span></td></tr>
+    <tr><td><b>Битые ссылки</b></td><td>187 внутренних 404 (удалённые товары), 23 цепочки редиректов 3+ хопа. Утечка ссылочного веса.</td><td><span class="pill p-warn">желательно</span></td></tr>
+    <tr><td><b>Мета-теги</b></td><td>На 140 страницах дублируются <code>title</code>/<code>description</code> (шаблон не подставляет переменные); 64 пустых <code>description</code>.</td><td><span class="pill p-warn">желательно</span></td></tr>
+    <tr><td><b>Заголовки Hn</b></td><td>Несколько <code>&lt;h1&gt;</code> на странице; категории без <code>h1</code> (заголовок зашит картинкой).</td><td><span class="pill p-warn">желательно</span></td></tr>
+    <tr><td><b>Микроразметка</b></td><td>Нет Schema.org вовсе. Для магазина критичны <code>Product</code>, <code>Offer</code>, <code>BreadcrumbList</code>, <code>Organization</code> — теряются расширенные сниппеты (цена/рейтинг/наличие).</td><td><span class="pill p-crit">критично</span></td></tr>
+    <tr><td><b>HTTPS / редиректы</b></td><td>http→https через 2 редиректа; доступны обе версии <code>www</code> и без www без 301. Размытие сигналов.</td><td><span class="pill p-warn">желательно</span></td></tr>
+    <tr><td><b>Мобильность</b></td><td>Горизонтальный скролл на карточке, тач-цели &lt;48px, viewport ок. Mobile-first индекс страдает.</td><td><span class="pill p-warn">желательно</span></td></tr>
+    <tr><td><b>Хлебные крошки</b></td><td>Визуально есть, в разметке нет <code>BreadcrumbList</code> → не показываются в сниппете.</td><td><span class="pill p-ok">на будущее</span></td></tr>
+    <tr><td><b>Логи/краул-бюджет</b></td><td>По логам 38% хитов Googlebot — на параметрические дубли. Бюджет тратится не на товары.</td><td><span class="pill p-crit">критично</span></td></tr>
+  </tbody>
+</table>
+
+<h2>3. ТЗ для программиста (фрагмент)</h2>
+<p class="sub">Главная ценность аудита — разработчик берёт и делает, без переспросов. Каждая задача: что, где, как проверить.</p>
+<table class="tz">
+  <thead><tr><th>Задача</th><th>Что сделать</th><th>Как проверить</th></tr></thead>
+  <tbody>
+    <tr><td>Закрыть параметрические дубли</td><td>В <code>&lt;head&gt;</code> страниц фильтров/сортировок выводить <code>&lt;link rel="canonical"&gt;</code> на базовую категорию (без параметров). В <code>robots.txt</code> добавить <code>Clean-param: filter&amp;sort&amp;utm_source&amp;utm_medium</code> (для Яндекса).</td><td>Вебмастер → «Страницы в поиске»: рост доли товаров, падение дублей; <code>site:</code> по параметру пуст.</td></tr>
+    <tr><td>Canonical вариаций товара</td><td>На карточках с вариациями (цвет/размер через GET) canonical → URL базового товара. Пагинация: canonical на страницу №1 категории.</td><td>Краул Screaming Frog: 0 «Canonicalised duplicates» по карточкам.</td></tr>
+    <tr><td>Schema.org Product</td><td>В шаблон карточки добавить JSON-LD <code>Product</code> + <code>Offer</code> (price, priceCurrency, availability), в шапку <code>Organization</code>, в крошки <code>BreadcrumbList</code>. Пример ниже.</td><td>Rich Results Test / Яндекс «Проверка разметки» — без ошибок; в выдаче цена и наличие.</td></tr>
+    <tr><td>Core Web Vitals (LCP)</td><td>Картинки → WebP с фолбэком, <code>loading="lazy"</code> на все ниже первого экрана, <code>width/height</code> для CLS; JS-блокеры — <code>defer</code>; включить <code>Cache-Control: max-age</code> и Gzip/Brotli.</td><td>PageSpeed Insights моб.: LCP &lt; 2,5 с; CrUX зелёный за 28 дней.</td></tr>
+    <tr><td>Битые ссылки и редиректы</td><td>Удалённые товары → 301 на категорию (не 404); схлопнуть цепочки редиректов в один 301; единый хост https + non-www через один 301.</td><td>Краул: 0 внутренних 404, max 1 редирект-хоп.</td></tr>
+    <tr><td>Шаблон мета-тегов</td><td>Сделать формулы <code>title</code>/<code>description</code> с переменными (<code>{Категория} — купить в {Город} | {Бренд}</code>), запретить пустые description.</td><td>Краул: 0 дублей title, 0 пустых description.</td></tr>
+  </tbody>
+</table>
+<h3>Пример JSON-LD для карточки товара (готов к вставке)</h3>
+<pre>&lt;script type="application/ld+json"&gt;
+{
+  "@context":"https://schema.org",
+  "@type":"Product",
+  "name":"{{ product.name }}",
+  "image":"{{ product.image_url }}",
+  "sku":"{{ product.sku }}",
+  "brand":{"@type":"Brand","name":"{{ product.brand }}"},
+  "offers":{
+    "@type":"Offer",
+    "price":"{{ product.price }}",
+    "priceCurrency":"RUB",
+    "availability":"https://schema.org/{{ 'InStock' if product.in_stock else 'OutOfStock' }}"
+  }
+}
+&lt;/script&gt;</pre>
+
+<h2>4. Приоритизация внедрения</h2>
+<table>
+  <thead><tr><th>Этап</th><th>Что входит</th><th>Эффект</th></tr></thead>
+  <tbody>
+    <tr><td><span class="pill p-crit">Спринт 1</span></td><td>Канонизация дублей + robots/Clean-param + Schema.org Product</td><td>Чистка индекса, расширенные сниппеты, рост CTR</td></tr>
+    <tr><td><span class="pill p-warn">Спринт 2</span></td><td>Core Web Vitals + битые ссылки/редиректы + единый хост</td><td>Скорость, сохранение ссылочного веса</td></tr>
+    <tr><td><span class="pill p-ok">Спринт 3</span></td><td>Шаблоны мета + Hn + sitemap по типам + крошки в разметке</td><td>Точная релевантность, полнота индексации</td></tr>
+  </tbody>
+</table>
+
+<footer>
+  <p><b>Методика.</b> Реальный аудит: полный краул сайта (Screaming Frog / собственный скрипт), данные Search Console и Яндекс.Вебмастера, анализ логов сервера на хиты ботов, проверка CWV по PageSpeed/CrUX, валидация разметки. Сдача: PDF-отчёт + таблица ТЗ для разработчика + созвон.</p>
+  <p>Образец подготовлен Никитой Цветковым · веб-разработка и SEO-техаудит. Учебный кейс, данные синтетические для демонстрации формата.</p>
+</footer>
+</div>
+</body>
+</html>

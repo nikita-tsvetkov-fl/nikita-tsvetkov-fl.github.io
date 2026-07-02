@@ -1,0 +1,99 @@
+{
+  "domain": "example.ru",
+  "provider": "yandex360",
+  "mailboxes": [
+    {
+      "first_name": "Иван",
+      "last_name": "Петров",
+      "email": "ivan.petrov@example.ru",
+      "department": "Продажи",
+      "title": "Менеджер по продажам",
+      "aliases": [],
+      "signature": "Иван Петров\nМенеджер по продажам / Продажи\nexample.ru"
+    },
+    {
+      "first_name": "Анна",
+      "last_name": "Петрова",
+      "email": "anna.petrova@example.ru",
+      "department": "Продажи",
+      "title": "Руководитель отдела продаж",
+      "aliases": [],
+      "signature": "Анна Петрова\nРуководитель отдела продаж / Продажи\nexample.ru"
+    },
+    {
+      "first_name": "Сергей",
+      "last_name": "Иванов",
+      "email": "sergei.ivanov@example.ru",
+      "department": "Разработка",
+      "title": "Backend-разработчик",
+      "aliases": [],
+      "signature": "Сергей Иванов\nBackend-разработчик / Разработка\nexample.ru"
+    },
+    {
+      "first_name": "Иван",
+      "last_name": "Петров",
+      "email": "ivan.petrov2@example.ru",
+      "department": "Логистика",
+      "title": "Кладовщик",
+      "aliases": [],
+      "signature": "Иван Петров\nКладовщик / Логистика\nexample.ru"
+    },
+    {
+      "first_name": "Мария",
+      "last_name": "Сидорова",
+      "email": "mariia.sidorova@example.ru",
+      "department": "Маркетинг",
+      "title": "SMM-специалист",
+      "aliases": [],
+      "signature": "Мария Сидорова\nSMM-специалист / Маркетинг\nexample.ru"
+    },
+    {
+      "first_name": "Дмитрий",
+      "last_name": "Кузнецов",
+      "email": "dmitrii.kuznetsov@example.ru",
+      "department": "Поддержка",
+      "title": "Специалист поддержки",
+      "aliases": [],
+      "signature": "Дмитрий Кузнецов\nСпециалист поддержки / Поддержка\nexample.ru"
+    }
+  ],
+  "groups": [
+    {
+      "address": "prodazhi@example.ru",
+      "members": [
+        "ivan.petrov@example.ru",
+        "anna.petrova@example.ru"
+      ]
+    },
+    {
+      "address": "razrabotka@example.ru",
+      "members": [
+        "sergei.ivanov@example.ru"
+      ]
+    },
+    {
+      "address": "logistika@example.ru",
+      "members": [
+        "ivan.petrov2@example.ru"
+      ]
+    },
+    {
+      "address": "marketing@example.ru",
+      "members": [
+        "mariia.sidorova@example.ru"
+      ]
+    },
+    {
+      "address": "podderzhka@example.ru",
+      "members": [
+        "dmitrii.kuznetsov@example.ru"
+      ]
+    }
+  ],
+  "dns": {
+    "MX": "10 mx.yandex.net.  (для example.ru)",
+    "SPF": "v=spf1 redirect=_spf.yandex.net",
+    "DKIM": "ключ mail._domainkey берётся в админке Я360 после добавления домена",
+    "DMARC": "v=DMARC1; p=quarantine; rua=mailto:dmarc@example.ru"
+  }
+}

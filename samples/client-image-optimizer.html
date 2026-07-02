@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Клиентская конвертация и оптимизация изображений перед AJAX — демо</title>
+<style>
+  :root{--bg:#0f1320;--card:#1a2032;--ac:#4f8cff;--ok:#39d98a;--warn:#ffb454;--mut:#8a93a8;--line:#2a3346}
+  *{box-sizing:border-box}
+  body{margin:0;font:15px/1.5 -apple-system,Segoe UI,Roboto,Arial,sans-serif;background:var(--bg);color:#e8edf6}
+  .wrap{max-width:860px;margin:0 auto;padding:28px 18px 64px}
+  h1{font-size:23px;margin:0 0 6px}
+  .sub{color:var(--mut);margin:0 0 22px}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:20px;margin:0 0 18px}
+  .drop{border:2px dashed #34405e;border-radius:12px;padding:34px 18px;text-align:center;cursor:pointer;transition:.15s}
+  .drop:hover,.drop.hot{border-color:var(--ac);background:#161d30}
+  .drop b{color:var(--ac)}
+  input[type=file]{display:none}
+  .opts{display:flex;flex-wrap:wrap;gap:16px;margin:16px 0 4px;font-size:13px;color:var(--mut)}
+  .opts label{display:flex;align-items:center;gap:6px}
+  table{width:100%;border-collapse:collapse;margin-top:14px;font-size:13px}
+  th,td{padding:8px 10px;text-align:left;border-bottom:1px solid var(--line);vertical-align:middle}
+  th{color:var(--mut);font-weight:600}
+  .thumb{width:48px;height:48px;object-fit:cover;border-radius:7px;background:#0a0e18}
+  .badge{display:inline-block;padding:2px 8px;border-radius:20px;font-size:11px;font-weight:600}
+  .b-queue{background:#2a3346;color:var(--mut)}
+  .b-work{background:#2d3a5e;color:var(--ac)}
+  .b-done{background:#143a2a;color:var(--ok)}
+  .b-skip{background:#3a3320;color:var(--warn)}
+  .b-err{background:#3a1f24;color:#ff6b7a}
+  .save{color:var(--ok);font-weight:600}
+  .meta{color:var(--mut);font-size:12px}
+  .bar{height:5px;border-radius:4px;background:#0a0e18;overflow:hidden;margin-top:6px}
+  .bar>i{display:block;height:100%;background:linear-gradient(90deg,var(--ac),var(--ok));width:0;transition:.2s}
+  .row{display:flex;gap:18px;flex-wrap:wrap}
+  .stat{flex:1;min-width:130px;background:#10172a;border:1px solid var(--line);border-radius:10px;padding:12px 14px}
+  .stat .n{font-size:22px;font-weight:700}
+  .stat .l{color:var(--mut);font-size:12px}
+  code{background:#10172a;padding:1px 6px;border-radius:5px;color:#bcd0f5;font-size:12px}
+  .note{font-size:12.5px;color:var(--mut)}
+  .pill{font-size:11px;padding:2px 7px;border-radius:6px;background:#10172a;border:1px solid var(--line);color:#bcd0f5}
+  button.go{background:var(--ac);color:#fff;border:0;border-radius:9px;padding:10px 18px;font-size:14px;font-weight:600;cursor:pointer}
+  button.go:disabled{opacity:.45;cursor:default}
+  .ico{font-size:30px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Клиентская конвертация и оптимизация изображений перед AJAX-отправкой</h1>
+  <p class="sub">Изолированный демо-скрипт: перехват выбора файлов → HEIC/HEIF/WebP/AVIF/JFIF/TIFF/BMP/тяжёлый&nbsp;PNG → JPEG в браузере → подмена Blob в <code>FormData</code>. Очередь Promise, ядро сайта не трогается.</p>
+
+  <div class="card">
+    <label class="drop" id="drop">
+      <div class="ico">📷⤵️</div>
+      <div>Перетащите фото сюда или <b>выберите файлы</b></div>
+      <div class="meta" style="margin-top:6px">HEIC · HEIF · WebP · AVIF · JFIF · TIFF · BMP · PNG · JPEG — до 10 за раз</div>
+      <input type="file" id="file" accept="image/*,.heic,.heif" multiple>
+    </label>
+    <div class="opts">
+      <label>Макс. сторона <input id="maxSide" type="number" value="1920" style="width:74px"> px</label>
+      <label>Качество JPEG <input id="q" type="number" value="0.85" step="0.05" min="0.3" max="1" style="width:64px"></label>
+      <label>Порог пережатия <input id="thr" type="number" value="3" step="0.5" style="width:56px"> МБ</label>
+      <label><input type="checkbox" id="seq" checked> Последовательная очередь</label>
+    </div>
+  </div>
+
+  <div class="card" id="resCard" style="display:none">
+    <div class="row" style="margin-bottom:6px">
+      <div class="stat"><div class="n" id="sCount">0</div><div class="l">файлов обработано</div></div>
+      <div class="stat"><div class="n" id="sIn">0</div><div class="l">исходный объём</div></div>
+      <div class="stat"><div class="n" id="sOut">0</div><div class="l">итог в JPEG</div></div>
+      <div class="stat"><div class="n save" id="sSave">0%</div><div class="l">экономия трафика</div></div>
+    </div>
+    <table id="tbl">
+      <thead><tr><th></th><th>Файл</th><th>Вход → выход</th><th>Размер</th><th>Статус</th></tr></thead>
+      <tbody></tbody>
+    </table>
+    <div style="margin-top:16px;display:flex;align-items:center;gap:14px">
+      <button class="go" id="send" disabled>Отправить как FormData (демо AJAX)</button>
+      <span class="note" id="sendNote"></span>
+    </div>
+  </div>
+
+  <div class="card">
+    <div style="font-weight:600;margin-bottom:8px">Что под капотом <span class="pill">соответствие ТЗ Тамаранга v2</span></div>
+    <div class="note" style="line-height:1.7">
+      • <b>Перехват:</b> слушаем <code>change</code> на <code>input[type=file]</code> (в боевом — хук в AJAX-загрузчик до отправки).<br>
+      • <b>HEIC/HEIF:</b> декод через <code>heic2any</code> → JPEG (подгружается с CDN на стороне клиента).<br>
+      • <b>WebP/AVIF/JFIF/TIFF/BMP/PNG:</b> декод браузером (<code>createImageBitmap</code> / <code>&lt;img&gt;</code>) → перерисовка на <code>&lt;canvas&gt;</code>.<br>
+      • <b>Оптимизация:</b> downscale до макс. стороны (по умолч. 1920px) + <code>canvas.toBlob('image/jpeg', 0.85)</code>; мелкие JPEG не трогаем.<br>
+      • <b>Очередь:</b> цепочка <code>Promise</code> по одному файлу — телефон не виснет при пакете 5–10 фото.<br>
+      • <b>Подмена:</b> результат пакуется в <code>new File([blob], 'name.jpg', {type:'image/jpeg'})</code> и кладётся в <code>FormData</code> под тем же <code>name</code> — сервер принимает как штатный JPEG, превью генерируются стандартно.<br>
+      • <b>Ядро сайта (PHP) не изменяется</b> — скрипт работает поверх существующего загрузчика.
+    </div>
+  </div>
+  <p class="note">Демо выполняется полностью в вашем браузере — файлы никуда не загружаются. Никита Цветков · портфолио</p>
+</div>
+
+<!-- heic2any подгружается клиентом с CDN; при недоступности HEIC помечается, остальные форматы работают -->
+<script src="https://cdn.jsdelivr.net/npm/heic2any@0.0.4/dist/heic2any.min.js" onerror="window.__noHeic=1"></script>
+<script>
+const $=s=>document.querySelector(s), tb=$('#tbl tbody');
+const fmtBytes=b=>b>=1048576?(b/1048576).toFixed(2)+' МБ':(b/1024).toFixed(0)+' КБ';
+let totIn=0,totOut=0,done=0,outFiles=[];
+
+const drop=$('#drop'),fi=$('#file');
+['dragover','dragenter'].forEach(e=>drop.addEventListener(e,ev=>{ev.preventDefault();drop.classList.add('hot')}));
+['dragleave','drop'].forEach(e=>drop.addEventListener(e,ev=>{ev.preventDefault();drop.classList.remove('hot')}));
+drop.addEventListener('drop',ev=>handle([...ev.dataTransfer.files]));
+fi.addEventListener('change',()=>handle([...fi.files]));
+
+function extOf(f){return (f.name.split('.').pop()||'').toLowerCase()}
+function isHeic(f){return /hei[cf]/.test(f.type)||/^(heic|heif)$/.test(extOf(f))}
+function needsWork(f,thr){
+  const e=extOf(f), big=f.size>thr;
+  if(isHeic(f)) return 'heic';
+  if(['webp','avif','jfif','tif','tiff','bmp','png'].includes(e)) return 'convert';
+  if((e==='jpg'||e==='jpeg'||f.type==='image/jpeg') && big) return 'recompress';
+  return 'skip';
+}
+
+async function decodeToCanvas(blob,maxSide){
+  let bmp;
+  try{ bmp=await createImageBitmap(blob); }
+  catch(_){ bmp=await new Promise((res,rej)=>{const i=new Image();i.onload=()=>res(i);i.onerror=rej;i.src=URL.createObjectURL(blob)}); }
+  const w=bmp.width||bmp.naturalWidth, h=bmp.height||bmp.naturalHeight;
+  const scale=Math.min(1, maxSide/Math.max(w,h));
+  const cw=Math.round(w*scale), ch=Math.round(h*scale);
+  const c=document.createElement('canvas'); c.width=cw; c.height=ch;
+  c.getContext('2d').drawImage(bmp,0,0,cw,ch);
+  return c;
+}
+function canvasToJpeg(c,q){return new Promise(r=>c.toBlob(b=>r(b),'image/jpeg',q))}
+
+async function processOne(f,row){
+  const maxSide=+$('#maxSide').value||1920, q=+$('#q').value||0.85, thr=(+$('#thr').value||3)*1048576;
+  const mode=needsWork(f,thr);
+  setStatus(row,'work','обработка');
+  try{
+    if(mode==='skip'){ setStatus(row,'skip','уже JPEG, ок'); finalize(f,f,row,false); return; }
+    let src=f;
+    if(mode==='heic'){
+      if(window.__noHeic||!window.heic2any){ setStatus(row,'err','HEIC: нет CDN'); return; }
+      const out=await heic2any({blob:f,toType:'image/jpeg',quality:q});
+      src=Array.isArray(out)?out[0]:out;
+    }
+    const canvas=await decodeToCanvas(src,maxSide);
+    const blob=await canvasToJpeg(canvas,q);
+    const out=new File([blob], f.name.replace(/\.[^.]+$/,'')+'.jpg', {type:'image/jpeg'});
+    setStatus(row,'done','готово · '+canvas.width+'×'+canvas.height);
+    finalize(f,out,row,true);
+  }catch(e){ setStatus(row,'err','ошибка: '+(e.message||e)); }
+}
+
+function finalize(orig,out,row,converted){
+  totIn+=orig.size; totOut+=out.size; done++; outFiles.push(out);
+  row.querySelector('.szcell').innerHTML = fmtBytes(orig.size)+' → <b>'+fmtBytes(out.size)+'</b>'+
+    (converted&&out.size<orig.size?' <span class="save">−'+Math.round((1-out.size/orig.size)*100)+'%</span>':'');
+  const url=URL.createObjectURL(out); row.querySelector('.thumb').src=url;
+  $('#sCount').textContent=done; $('#sIn').textContent=fmtBytes(totIn);
+  $('#sOut').textContent=fmtBytes(totOut);
+  $('#sSave').textContent=totIn?('−'+Math.round((1-totOut/totIn)*100)+'%'):'0%';
+  $('#send').disabled=false;
+}
+function setStatus(row,cls,txt){row.querySelector('.stcell').innerHTML='<span class="badge b-'+cls+'">'+txt+'</span>'}
+
+function addRow(f){
+  const tr=document.createElement('tr');
+  tr.innerHTML='<td><img class="thumb" alt=""></td><td>'+f.name+'<div class="meta">'+(extOf(f).toUpperCase())+'</div></td>'+
+    '<td class="szcell meta">…</td><td class="meta">'+fmtBytes(f.size)+'</td><td class="stcell"><span class="badge b-queue">в очереди</span></td>';
+  tb.appendChild(tr); return tr;
+}
+
+async function handle(files){
+  if(!files.length) return;
+  files=files.slice(0,10);
+  $('#resCard').style.display='block';
+  const jobs=files.map(f=>({f,row:addRow(f)}));
+  if($('#seq').checked){ for(const j of jobs) await processOne(j.f,j.row); }     // последовательная очередь
+  else await Promise.all(jobs.map(j=>processOne(j.f,j.row)));                     // параллельно (для сравнения)
+}
+
+$('#send').addEventListener('click',()=>{
+  const fd=new FormData();
+  outFiles.forEach((f,i)=>fd.append('photos[]',f,f.name));   // те же name/структура, что ждёт движок
+  let names=[...fd.keys()];
+  $('#sendNote').textContent='FormData собран: '+outFiles.length+' файл(ов) под полем "photos[]", все .jpg image/jpeg — готово к штатному AJAX-POST.';
+});
+</script>
+</body>
+</html>

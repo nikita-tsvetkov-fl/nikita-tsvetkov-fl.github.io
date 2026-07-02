@@ -1,0 +1,140 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Бот-репостер: панель модерации и расписания — демо</title>
+<style>
+  body{font:16px/1.55 -apple-system,Segoe UI,Roboto,sans-serif;margin:0;color:#1a1f29;background:#eef1f6}
+  header{background:#0f172a;color:#fff;padding:30px 20px}
+  header h1{margin:0 0 8px;font-size:23px}
+  header p{margin:0;color:#94a3b8;max-width:820px}
+  main{max-width:1040px;margin:0 auto;padding:22px 16px 64px}
+  .flow{display:flex;flex-wrap:wrap;gap:8px;margin:18px 0}
+  .flow span{background:#fff;border:1px solid #cbd5e1;border-radius:20px;padding:6px 14px;font-size:13px;font-weight:600;color:#334155}
+  .flow span.on{background:#0f172a;color:#fff;border-color:#0f172a}
+  h2{font-size:16px;margin:26px 0 10px;color:#0f172a}
+  .qitem{background:#fff;border:1px solid #e2e8f0;border-left-width:4px;border-radius:10px;padding:14px 16px;margin:12px 0}
+  .qitem.approve{border-left-color:#16a34a}
+  .qitem.reject{border-left-color:#dc2626}
+  .qhead{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:10px}
+  .src{font-weight:700}
+  .cat{font-size:12px;background:#e2e8f0;border-radius:6px;padding:2px 8px;color:#475569}
+  .sty{font:13px sans-serif;padding:3px 6px;border:1px solid #cbd5e1;border-radius:6px;background:#f8fafc;color:#334155}
+  .b{margin-left:auto;font-size:11px;font-weight:800;letter-spacing:.05em;padding:3px 9px;border-radius:6px}
+  .b.ok{background:#dcfce7;color:#166534}
+  .b.no{background:#fee2e2;color:#991b1b}
+  pre.out{margin:0;white-space:pre-wrap;word-break:break-word;font:14px/1.5 ui-monospace,Menlo,Consolas,monospace;background:#f8fafc;border:1px solid #eef2f7;border-radius:8px;padding:10px}
+  .qfoot{display:flex;align-items:center;gap:10px;margin-top:10px}
+  .btn{font:13px sans-serif;font-weight:600;border-radius:7px;padding:6px 12px;border:1px solid;cursor:default;opacity:.55}
+  .btn.ap{background:#16a34a;color:#fff;border-color:#16a34a}
+  .btn.rj{background:#fff;color:#dc2626;border-color:#fecaca}
+  .sched{margin-left:auto;font-weight:700;color:#0f766e}
+  .rej{margin-left:auto;font-size:13px;color:#b91c1c}
+  .pub{background:#fff;border:1px solid #e2e8f0;border-radius:10px;padding:8px 20px}
+  .pub li{margin:7px 0}
+  .note{background:#fff;border:1px solid #e2e8f0;border-radius:10px;padding:14px 18px;font-size:14px;color:#475569}
+  .note b{color:#0f172a}
+  footer{text-align:center;color:#64748b;font-size:13px;padding:24px}
+</style>
+</head>
+<body>
+<header>
+  <h1>Бот-репостер каналов: панель модерации и планировщик</h1>
+  <p>Полный конвейер: бот читает каналы-источники → чистит и переписывает пост в выбранном
+  стиле → кладёт в очередь на модерацию → оператор подтверждает или отклоняет → планировщик
+  ставит публикацию в расписание с учётом лимитов. Ниже — рабочая веб-панель (статичный
+  снимок состояния; движок рерайта реальный).</p>
+</header>
+<main>
+  <div class="flow">
+    <span class="on">1 · Мониторинг каналов (MTProto)</span>
+    <span class="on">2 · Классификация</span>
+    <span class="on">3 · Рерайт по стилю</span>
+    <span class="on">4 · Очередь модерации</span>
+    <span class="on">5 · Планировщик + публикация</span>
+  </div>
+
+  <h2>Очередь «На модерации» (3)</h2>
+  
+      <div class="qitem approve">
+        <div class="qhead">
+          <span class="src">@SoftHub</span>
+          <span class="cat">Релизы</span>
+          <select disabled class="sty"><option>Сухой-новостной</option><option selected>Брендовый-вовлекающий</option></select>
+          <span class="b ok">APPROVED</span>
+        </div>
+        <pre class="out">🔥 Photora 7.2 уже вышла! #update #release #Photora
+
+Что нового в версии 7.2:
+- AI-ластик для фона стал в 2 раза быстрее
+- поддержка HEIC и AVIF
+- исправлены вылеты при экспорте 4K
+
+🔔 Подписывайтесь на «Апдейты Софта» — разбираем каждое обновление.
+Вопросы по подписке: @your_channel</pre>
+        <div class="qfoot">
+          <button class="btn ap" disabled>✓ Approve</button>
+          <button class="btn rj" disabled>✗ Reject</button>
+          <span class="sched">📅 12:05 МСК</span>
+        </div>
+      </div>
+
+      <div class="qitem approve">
+        <div class="qhead">
+          <span class="src">@NewsRaw</span>
+          <span class="cat">Безопасность</span>
+          <select disabled class="sty"><option selected>Сухой-новостной</option><option>Брендовый-вовлекающий</option></select>
+          <span class="b ok">APPROVED</span>
+        </div>
+        <pre class="out">⚡️ Большое обновление NovaGuard 11 #update
+
+Версия 11.0 принесла:
+1) новый движок поведенческого анализа
+2) защиту от шифровальщиков в реальном времени
+3) расход батареи снижен на 25%
+
+— Канал «Апдейты Софта». Только факты по версиям.</pre>
+        <div class="qfoot">
+          <button class="btn ap" disabled>✓ Approve</button>
+          <button class="btn rj" disabled>✗ Reject</button>
+          <span class="sched">📅 12:13 МСК</span>
+        </div>
+      </div>
+
+      <div class="qitem reject">
+        <div class="qhead">
+          <span class="src">@AppLeaksRU</span>
+          <span class="cat">Гемблинг</span>
+          <select disabled class="sty"><option selected>Сухой-новостной</option><option>Брендовый-вовлекающий</option></select>
+          <span class="b no">REJECTED</span>
+        </div>
+        <pre class="out">🎰 Заноси в LuckySpin — депозит х2 только сегодня!
+Промокод GAMBLE100, вывод за 5 минут.
+
+— Канал «Апдейты Софта». Только факты по версиям.</pre>
+        <div class="qfoot">
+          <button class="btn ap" disabled>✓ Approve</button>
+          <button class="btn rj" disabled>✗ Reject</button>
+          <span class="rej">⛔ Категория «Гемблинг» отключена в правилах канала</span>
+        </div>
+      </div>
+
+  <h2>Расписание публикаций (после Approve)</h2>
+  <ul class="pub">
+    <li><b>12:05 МСК</b> · @SoftHub → <i>Photora 7.2</i> (Брендовый-вовлекающий)</li>
+<li><b>12:13 МСК</b> · @NewsRaw → <i>NovaGuard 11.0</i> (Сухой-новостной)</li>
+  </ul>
+
+  <div class="note">
+    <b>Что под капотом:</b> движок рерайта конфигурируется правилами на канал
+    (source_terms / cta / keep_hashtags / footer) — режет чужие ссылки, упоминания
+    источников, призывы к покупке и цены. Стиль выбирается на пост/канал; помимо
+    правилового рерайта подключается AI-стиль (LLM со стиль-промптом) — контракт
+    тот же текст→текст. Гемблинг-пост отклонён фильтром тематики автоматически до
+    модерации. Планировщик держит интервал не чаще 1 поста/8 мин на канал.
+  </div>
+</main>
+<footer>Демо переиспользуемого движка · правила и стили настраиваются под ваши каналы в config.json</footer>
+</body>
+</html>

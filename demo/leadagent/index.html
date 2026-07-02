@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Messenger → CRM lead agent (U-ON.Travel) — демо</title>
+<style>
+  :root{--bg:#0f1115;--card:#171a21;--ink:#e8eaed;--muted:#9aa0aa;--accent:#4f9cf9;--green:#43c08a}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.55 -apple-system,Segoe UI,Roboto,Arial,sans-serif}
+  .wrap{max-width:860px;margin:0 auto;padding:32px 20px 60px}
+  a{color:var(--accent)}
+  h1{font-size:24px;margin:0 0 6px}
+  .sub{color:var(--muted);margin:0 0 28px}
+  h2{font-size:16px;text-transform:uppercase;letter-spacing:.04em;color:var(--muted);margin:34px 0 12px}
+  .chat{background:var(--card);border-radius:14px;padding:14px}
+  .msg{display:flex;margin:8px 0}
+  .msg .b{max-width:78%;padding:9px 13px;border-radius:14px}
+  .agent .b{background:#222834;border-bottom-left-radius:4px}
+  .client{justify-content:flex-end}
+  .client .b{background:#234b78;border-bottom-right-radius:4px}
+  pre{background:var(--card);border-radius:12px;padding:16px;overflow:auto;font:13px/1.5 ui-monospace,Menlo,Consolas,monospace;color:#cdd3dc}
+  .api{border-left:3px solid var(--green)}
+  .tag{display:inline-block;font-size:12px;color:var(--green);font-weight:600;margin-bottom:4px}
+  .back{display:inline-block;margin-bottom:22px;color:var(--muted);text-decoration:none}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <a class="back" href="../../">← к портфолио</a>
+  <h1>Messenger → CRM lead agent (U-ON.Travel)</h1>
+  <p class="sub">ИИ-агент ведёт диалог в мессенджере, квалифицирует тур-лид и заводит заявку в CRM U-ON.Travel через API. Снимает с менеджера первичный сбор данных — он подключается на готовом лиде.</p>
+
+  <h2>1. Диалог-квалификация</h2>
+  <div class="chat">
+    <div class="msg agent"><div class="b">Здравствуйте! Помогу подобрать тур. Задам пару вопросов.</div></div>
+    <div class="msg agent"><div class="b">Как к вам обращаться?</div></div>
+    <div class="msg client"><div class="b">Здравствуйте, Анна</div></div>
+    <div class="msg agent"><div class="b">Оставьте номер телефона — менеджер свяжется с вами.</div></div>
+    <div class="msg client"><div class="b">+7 916 123-45-67</div></div>
+    <div class="msg agent"><div class="b">Куда хотите поехать? (страна/курорт)</div></div>
+    <div class="msg client"><div class="b">Хотим на море, Турция или Египет</div></div>
+    <div class="msg agent"><div class="b">На какие даты ориентируетесь?</div></div>
+    <div class="msg client"><div class="b">вторая половина июля, дней на 10</div></div>
+    <div class="msg agent"><div class="b">Сколько человек едет (взрослые/дети)?</div></div>
+    <div class="msg client"><div class="b">двое взрослых и ребёнок 6 лет</div></div>
+    <div class="msg agent"><div class="b">На какой бюджет рассчитываете?</div></div>
+    <div class="msg client"><div class="b">до 250 тысяч</div></div>
+    <div class="msg agent"><div class="b">Спасибо! Передал заявку менеджеру, он скоро свяжется.</div></div>
+  </div>
+
+  <h2>2. Собранная квалификация</h2>
+<pre>{
+  "name": "Анна",
+  "phone": "+79161234567",
+  "destination": "Хотим на море, Турция или Египет",
+  "dates": "вторая половина июля, дней на 10",
+  "pax": "двое взрослых и ребёнок 6 лет",
+  "budget": "до 250 тысяч"
+}</pre>
+
+  <h2>3. Создание лида в U-ON.Travel</h2>
+  <span class="tag">сначала дедуп по телефону — не плодим дубли</span>
+<pre class="api">GET  https://api.u-on.ru/{KEY}/user/phone/+79161234567.json
+
+POST https://api.u-on.ru/{KEY}/user/create.json
+{
+  "u_name": "Анна",
+  "u_phone": "+79161234567"
+}
+
+POST https://api.u-on.ru/{KEY}/lead/create.json
+{
+  "u_name": "Анна",
+  "u_phone": "+79161234567",
+  "note": "Направление: Турция или Египет\nДаты: вторая половина июля, ~10 дней\nТуристы: двое взрослых и ребёнок 6 лет\nБюджет: до 250 тысяч",
+  "source": "Чат-бот (мессенджер)"
+}</pre>
+
+  <p class="sub" style="margin-top:28px">Ядро не привязано к одному мессенджеру: Telegram / WhatsApp / VK / Авито подключаются адаптерами поверх. Под ваш проект — настройка слотов квалификации и полей U-ON под ваш процесс. Система ставится на ваши ресурсы.</p>
+</div>
+</body>
+</html>

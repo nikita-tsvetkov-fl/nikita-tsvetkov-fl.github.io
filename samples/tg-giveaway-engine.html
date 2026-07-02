@@ -1,0 +1,68 @@
+<!doctype html><html lang="ru"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Движок розыгрыша Telegram (звёзды / NFT, provably-fair) — образец — Никита Цветков</title>
+<style>
+body{margin:0;font-family:-apple-system,Segoe UI,Roboto,Arial,sans-serif;background:#0d1117;color:#e6edf3;line-height:1.55}
+.wrap{max-width:900px;margin:0 auto;padding:28px 20px}
+a{color:#2f81f7;text-decoration:none}a:hover{text-decoration:underline}
+h1{font-size:23px;margin:0 0 6px}h2{font-size:17px;margin:26px 0 8px;border-bottom:1px solid #30363d;padding-bottom:4px}
+p{color:#c2ccd6;font-size:14px}.muted{color:#9da7b3;font-size:13px}
+table{border-collapse:collapse;width:100%;margin-top:12px;font-size:13px}
+th,td{border:1px solid #30363d;padding:7px 10px;text-align:left;vertical-align:top}
+th{background:#161b22}
+ul{font-size:14px;color:#c2ccd6}li{margin:4px 0}
+.tag{display:inline-block;background:#1f6feb22;border:1px solid #1f6feb55;color:#79c0ff;font-size:11px;padding:1px 8px;border-radius:10px;margin-left:6px}
+.box{background:#161b22;border:1px solid #30363d;border-radius:8px;padding:14px 16px;margin-top:12px}
+pre{background:#161b22;border:1px solid #30363d;border-radius:8px;padding:12px 14px;overflow:auto;font-size:12.5px;color:#c9d4e0}
+code{background:#161b22;border:1px solid #30363d;border-radius:4px;padding:1px 5px;font-size:12px}
+.num{text-align:right}
+</style></head><body><div class="wrap">
+<p><a href="../">&larr; Назад в портфолио</a></p>
+<h1>Движок розыгрыша Telegram: звёзды / NFT / подарки <span class="tag">рабочий образец</span></h1>
+<p class="muted">Ядро mini-app розыгрыша под ТЗ: админ задаёт банк звёзд и число мест, звёзды делятся между победителями поровну, шанс выигрыша взвешен по билетам, подарки раздаются по рангу, NFT всегда достаётся игроку №1. Ниже — реальный прогон движка на тестовом раунде из 83 участников. Чистый Python, без зависимостей; в проект встраивается за бэкендом mini-app, выдачу звёзд/подарков исполняет Bot API бота заказчика.</p>
+
+<h2>1. Параметры раунда (реальный прогон)</h2>
+<table>
+<tbody>
+<tr><th>Банк звёзд</th><td>5000</td><th>Мест</th><td>50</td></tr>
+<tr><th>Звёзд каждому</th><td>100 (5000 / 50, остаток 0)</td><th>Участников</th><td>83</td></tr>
+<tr><th>Всего билетов</th><td>3094</td><th>round_id</th><td><code>round-2026-06-25-A</code></td></tr>
+</tbody>
+</table>
+
+<h2>2. Победители (топ-12 из 50)</h2>
+<table>
+<thead><tr><th>Ранг</th><th>Участник</th><th class="num">Билеты</th><th class="num">Шанс</th><th class="num">Звёзды</th><th>Подарки</th></tr></thead>
+<tbody>
+<tr><td>1</td><td>Игрок-1</td><td class="num">500</td><td class="num">100.0%</td><td class="num">100</td><td>NFT-подарок, Мишка</td></tr>
+<tr><td>2</td><td>Игрок-2</td><td class="num">300</td><td class="num">9.70%</td><td class="num">100</td><td>Мишка</td></tr>
+<tr><td>3</td><td>Игрок-3</td><td class="num">200</td><td class="num">6.46%</td><td class="num">100</td><td>Мишка</td></tr>
+<tr><td>4</td><td>Игрок-175</td><td class="num">50</td><td class="num">1.62%</td><td class="num">100</td><td>Мишка</td></tr>
+<tr><td>5</td><td>Игрок-172</td><td class="num">48</td><td class="num">1.55%</td><td class="num">100</td><td>Мишка</td></tr>
+<tr><td>6</td><td>Игрок-100</td><td class="num">47</td><td class="num">1.52%</td><td class="num">100</td><td>Алмаз</td></tr>
+<tr><td>7</td><td>Игрок-120</td><td class="num">47</td><td class="num">1.52%</td><td class="num">100</td><td>Алмаз</td></tr>
+<tr><td>8</td><td>Игрок-141</td><td class="num">47</td><td class="num">1.52%</td><td class="num">100</td><td>Алмаз</td></tr>
+<tr><td>9</td><td>Игрок-159</td><td class="num">47</td><td class="num">1.52%</td><td class="num">100</td><td>Цветок</td></tr>
+<tr><td>10</td><td>Игрок-165</td><td class="num">46</td><td class="num">1.49%</td><td class="num">100</td><td>—</td></tr>
+<tr><td>11</td><td>Игрок-116</td><td class="num">45</td><td class="num">1.45%</td><td class="num">100</td><td>—</td></tr>
+<tr><td>12</td><td>Игрок-124</td><td class="num">43</td><td class="num">1.39%</td><td class="num">100</td><td>—</td></tr>
+</tbody>
+</table>
+<p class="muted">Итого 50 мест, роздано 5000 / 5000 звёзд (остаток 0). Игрок №1 (больше всего билетов) — гарантированное место, 100% и NFT.</p>
+
+<h2>3. Честность раунда (provably-fair)</h2>
+<p>Главная боль таких розыгрышей — споры «результат подкручен». Здесь это закрыто математикой, а не словами:</p>
+<ul>
+<li><b>Взвешенная жеребьёвка по билетам без повторов</b> — метод Efraimidis–Spirakis (A-Res), корректный сразу для нескольких мест: чем больше билетов, тем выше шанс, но исход не предопределён.</li>
+<li><b>Детерминированный seed раунда.</b> Результат полностью воспроизводится из seed; <code>reveal_salt</code> публикуется ПОСЛЕ розыгрыша, и любой участник может пересчитать и убедиться, что итог не меняли.</li>
+<li><b>Гарантии ТЗ соблюдены проверяемо:</b> звёзды поделены поровну, NFT — игроку №1, подарки по рангу билетов среди победителей.</li>
+</ul>
+
+<h2>4. Как встраивается в проект</h2>
+<ul>
+<li><code>participants</code>/<code>tickets</code> приходят из БД mini-app (фронт mini-app + бэкенд + админка — часть полного проекта).</li>
+<li>Доставка звёзд и подарков — через Bot API бота заказчика (Stars через инвойсы, NFT/подарки через методы gifts).</li>
+<li>Движок отдаёт готовый план «кому сколько звёзд и какие подарки» + provably-fair лог — бэкенд просто исполняет выдачу.</li>
+</ul>
+<p class="muted">Под ваше ТЗ настраиваю правила распределения, ранжирование подарков и формат отчёта. Работаю на инфраструктуре и боте заказчика.</p>
+</div></body></html>

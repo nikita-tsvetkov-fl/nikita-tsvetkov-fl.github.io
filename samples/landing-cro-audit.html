@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Аудит лендинга по данным Яндекс Метрики — образец работы</title>
+<style>
+  :root{--bg:#0f1320;--card:#171c2e;--ink:#e8ecf6;--mut:#9aa6c4;--acc:#5b8cff;--ok:#37c98a;--warn:#ffb84d;--crit:#ff6b6b;--line:#283050}
+  *{box-sizing:border-box}
+  body{margin:0;font:16px/1.6 -apple-system,Segoe UI,Roboto,Arial,sans-serif;background:var(--bg);color:var(--ink)}
+  .wrap{max-width:920px;margin:0 auto;padding:32px 20px 80px}
+  header{border-bottom:1px solid var(--line);padding-bottom:20px;margin-bottom:28px}
+  .tag{display:inline-block;font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--acc);border:1px solid var(--acc);border-radius:20px;padding:3px 12px;margin-bottom:14px}
+  h1{font-size:28px;margin:0 0 8px}
+  h2{font-size:21px;margin:38px 0 14px;padding-top:8px}
+  h3{font-size:17px;margin:22px 0 8px;color:var(--ink)}
+  .sub{color:var(--mut);font-size:15px}
+  .note{background:#1b2138;border:1px solid var(--line);border-left:3px solid var(--acc);border-radius:8px;padding:12px 16px;color:var(--mut);font-size:14px;margin:18px 0}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:18px 20px;margin:14px 0}
+  table{width:100%;border-collapse:collapse;margin:14px 0;font-size:14px}
+  th,td{text-align:left;padding:10px 12px;border-bottom:1px solid var(--line);vertical-align:top}
+  th{color:var(--mut);font-weight:600;font-size:13px;text-transform:uppercase;letter-spacing:.04em}
+  .pill{display:inline-block;font-size:12px;font-weight:700;border-radius:6px;padding:2px 9px}
+  .p-crit{background:rgba(255,107,107,.15);color:var(--crit)}
+  .p-warn{background:rgba(255,184,77,.15);color:var(--warn)}
+  .p-ok{background:rgba(55,201,138,.15);color:var(--ok)}
+  .funnel{display:flex;flex-direction:column;gap:6px;margin:14px 0}
+  .step{display:flex;align-items:center;gap:12px}
+  .bar{height:34px;border-radius:6px;background:linear-gradient(90deg,var(--acc),#3a5bd0);display:flex;align-items:center;padding-left:12px;font-weight:600;font-size:13px;color:#fff;white-space:nowrap}
+  .drop{color:var(--crit);font-size:13px;font-weight:700}
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+  .before,.after{border-radius:8px;padding:12px 14px;font-size:14px}
+  .before{background:rgba(255,107,107,.08);border:1px solid rgba(255,107,107,.25)}
+  .after{background:rgba(55,201,138,.08);border:1px solid rgba(55,201,138,.25)}
+  .lbl{font-size:12px;text-transform:uppercase;letter-spacing:.05em;color:var(--mut);margin-bottom:4px}
+  ul{margin:8px 0;padding-left:20px}
+  li{margin:5px 0}
+  code{background:#0c1020;padding:1px 6px;border-radius:4px;color:#9fc1ff;font-size:13px}
+  footer{margin-top:50px;border-top:1px solid var(--line);padding-top:18px;color:var(--mut);font-size:13px}
+  .metric{display:inline-flex;flex-direction:column;align-items:flex-start;background:#0c1020;border:1px solid var(--line);border-radius:8px;padding:10px 16px;margin:4px 8px 4px 0}
+  .metric b{font-size:22px;color:var(--ink)}
+  .metric span{font-size:12px;color:var(--mut)}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header>
+  <span class="tag">Образец работы · CRO-аудит</span>
+  <h1>Аудит посадочной страницы по данным Яндекс Метрики</h1>
+  <p class="sub">Демонстрационный пример методики и формата отчёта. Продукт-образец: <b>детский онлайн-курс английского языка</b> (учебный кейс, не реальный клиент). На реальном проекте все находки строятся на данных вашего счётчика Метрики, а не «по опыту».</p>
+</header>
+
+<div class="note">
+  <b>Зачем этот документ.</b> Это сокращённая версия (4 из ~12 разделов), чтобы показать глубину разбора и принцип «находка → данные Метрики → гипотеза → правка → как замерить эффект». Полный аудит конкретной страницы делается после подключения доступа к вашему счётчику и согласования цели кампании.
+</div>
+
+<h2>1. Резюме для занятого заказчика</h2>
+<div class="card">
+  <div>
+    <span class="metric"><b>1,9%</b><span>конверсия в пробный доступ</span></span>
+    <span class="metric"><b>68%</b><span>скролл до блока «цена»</span></span>
+    <span class="metric"><b>14%</b><span>доходят до формы</span></span>
+    <span class="metric"><b>41 сек</b><span>медианное время на странице</span></span>
+  </div>
+  <p style="margin-top:14px">Главная потеря — <b>между первым экраном и блоком оффера</b>: 32% уходят, не доскроллив до сути. Причина по карте скроллинга и Вебвизору — первый экран не отвечает на главный вопрос ЦА (родителя): <i>«сможет ли ребёнок заниматься сам, без меня и без тренера»</i>. Второй очаг потерь — форма пробного доступа: из дошедших до неё заполняют 14%, остальные «отваливаются» на поле телефона (по записям Вебвизора — момент ввода номера).</p>
+  <p>Три правки с наибольшим эффектом при минимальных усилиях: переписать заголовок первого экрана под главное возражение, вынести «как проходит занятие без родителя» выше блока цены, упростить форму до 1 поля. Ожидаемый прирост конверсии — оценочно <b>+40–70%</b> относительно базы (проверяется A/B-тестом).</p>
+</div>
+
+<h2>2. Конверсионный путь по данным Метрики</h2>
+<p class="sub">Воронка построена по составным целям и параметрам визитов. Каждая ступень — реальное событие счётчика, а не предположение.</p>
+<div class="funnel">
+  <div class="step"><div class="bar" style="width:100%">Визит на лендинг — 10 000 <span style="opacity:.8">&nbsp;(100%)</span></div></div>
+  <div class="step"><div class="bar" style="width:68%">Скролл до оффера — 6 800 (68%)</div><span class="drop">−32%</span></div>
+  <div class="step"><div class="bar" style="width:38%">Клик «Получить пробный» — 3 800 (38%)</div><span class="drop">−30 п.п.</span></div>
+  <div class="step"><div class="bar" style="width:14%">Открыли форму — 1 400 (14%)</div><span class="drop">−24 п.п.</span></div>
+  <div class="step"><div class="bar" style="width:5%;background:linear-gradient(90deg,#37c98a,#1f9d6a)">Отправили заявку — 500 (5%)</div><span class="drop">−9 п.п.</span></div>
+  <div class="step"><div class="bar" style="width:1.9%;min-width:120px;background:linear-gradient(90deg,#37c98a,#1f9d6a)">Оплатили подписку — 190 (1,9%)</div></div>
+</div>
+<div class="note">Источники данных Метрики под каждую ступень: <code>Карта скроллинга</code> (доскролл до оффера), <code>Карта кликов</code> и цель-клик по CTA, <code>составная цель</code> «открытие формы → отправка», сегмент <code>Вебвизор</code> по визитам с дроп-офом на форме. Сегментация по источнику (<code>Директ → группа объявлений</code>) показывает, какая кампания приводит «холодный» трафик.</div>
+
+<h2>3. Находки по блокам (фрагмент)</h2>
+<table>
+  <thead><tr><th>Блок</th><th>Находка (с опорой на данные)</th><th>Приоритет</th></tr></thead>
+  <tbody>
+    <tr><td><b>Первый экран</b></td><td>Заголовок про «лучший курс», а не про самостоятельность ребёнка. Карта скроллинга: 32% не идут дальше. Главное возражение ЦА не снято на первом экране.</td><td><span class="pill p-crit">критично</span></td></tr>
+    <tr><td><b>Оффер / УТП</b></td><td>«Бесплатный пробный доступ» не объясняет, что внутри и почему ребёнок справится сам. Тепловая карта: внимание уходит на картинку, не на текст оффера.</td><td><span class="pill p-crit">критично</span></td></tr>
+    <tr><td><b>Форма заявки</b></td><td>5 полей, телефон обязателен с первого шага. Вебвизор: дроп на вводе номера. Конверсия открытой формы 14%→5%.</td><td><span class="pill p-crit">критично</span></td></tr>
+    <tr><td><b>Блок «как проходит занятие»</b></td><td>Расположен ниже цены — те, кто сомневается, до него не доходят (доскролл 41%). Перенос выше цены закрывает возражение раньше.</td><td><span class="pill p-warn">желательно</span></td></tr>
+    <tr><td><b>Соцдоказательство</b></td><td>Отзывы есть, но без имени/возраста ребёнка и результата. Для родителя нерелевантны. Кликов по блоку почти нет (карта кликов).</td><td><span class="pill p-warn">желательно</span></td></tr>
+    <tr><td><b>Скорость загрузки</b></td><td>LCP 3,8 с на мобильных (отчёт «Время загрузки»). Мобильный трафик из Директа — 71%. Каждая лишняя секунда = −7% к доскроллу.</td><td><span class="pill p-warn">желательно</span></td></tr>
+    <tr><td><b>Мета/аналитика</b></td><td>Не размечены микроконверсии (клик по «программе», воспроизведение видео-демо). Без них не видно, где «греется» интерес.</td><td><span class="pill p-ok">на будущее</span></td></tr>
+  </tbody>
+</table>
+
+<h2>4. Альтернативные тексты (под главное возражение)</h2>
+<div class="grid2">
+  <div class="before"><div class="lbl">Было — заголовок</div>«Лучший онлайн-курс английского для детей»</div>
+  <div class="after"><div class="lbl">Стало — заголовок</div>«Английский, на котором ребёнок 5+ занимается сам — без вас и без репетитора. Проверьте на бесплатном уроке»</div>
+</div>
+<div class="grid2">
+  <div class="before"><div class="lbl">Было — оффер</div>«Запишитесь на бесплатный пробный доступ»</div>
+  <div class="after"><div class="lbl">Стало — оффер</div>«7 дней бесплатно: ребёнок проходит первые уроки сам, вы видите прогресс в приложении. Если не втянулся — просто не продлеваете»</div>
+</div>
+<div class="grid2">
+  <div class="before"><div class="lbl">Было — CTA</div>«Отправить»</div>
+  <div class="after"><div class="lbl">Стало — CTA</div>«Открыть бесплатный доступ»</div>
+</div>
+<h3>FAQ — добавить блок, снимающий возражение «сам ли справится»</h3>
+<ul>
+  <li><b>Ребёнку правда не нужна моя помощь?</b> Уроки озвучены и показаны на примерах, задания — игровые, прогресс виден вам в приложении.</li>
+  <li><b>А если не получится?</b> Первые 7 дней бесплатны, отмена в один клик, деньги за подписку не списываются до конца пробного периода.</li>
+  <li><b>Сколько времени в день?</b> 10–15 минут, можно с телефона или планшета.</li>
+</ul>
+
+<h2>5. План конкурентного разбора (3–5 игроков)</h2>
+<p class="sub">На реальном проекте — таблица по согласованному списку: оффер первого экрана, как закрыто возражение «сам/не сам», условия пробного периода, цена и подача, форматы соцдоказательства. Цель — найти, чем отстроиться, а не скопировать.</p>
+
+<h2>6. Приоритизация правок</h2>
+<table>
+  <thead><tr><th>Правка</th><th>Усилие</th><th>Эффект</th><th>Очередь</th></tr></thead>
+  <tbody>
+    <tr><td>Заголовок + оффер первого экрана под возражение</td><td>низкое</td><td>высокий</td><td><span class="pill p-crit">1 — сразу</span></td></tr>
+    <tr><td>Форма: 1 поле, телефон вторым шагом</td><td>низкое</td><td>высокий</td><td><span class="pill p-crit">1 — сразу</span></td></tr>
+    <tr><td>«Как проходит занятие» выше цены</td><td>среднее</td><td>средний</td><td><span class="pill p-warn">2</span></td></tr>
+    <tr><td>Переоформить отзывы (имя/возраст/результат)</td><td>среднее</td><td>средний</td><td><span class="pill p-warn">2</span></td></tr>
+    <tr><td>Оптимизация LCP на мобильных</td><td>среднее</td><td>средний</td><td><span class="pill p-warn">3</span></td></tr>
+    <tr><td>Разметка микроконверсий в Метрике</td><td>низкое</td><td>аналитика</td><td><span class="pill p-ok">3</span></td></tr>
+  </tbody>
+</table>
+
+<footer>
+  <p><b>Методика.</b> Все находки на реальном проекте — со ссылкой на конкретный отчёт Метрики (карта скроллинга/кликов, Вебвизор, воронка по составным целям, сегменты по источнику Директа). Формат сдачи: PDF-отчёт + созвон с разбором приоритетов. Оплата поэтапная.</p>
+  <p>Образец подготовлен Никитой Цветковым · фриланс-разработка и веб-аналитика. Учебный кейс, данные синтетические для демонстрации формата.</p>
+</footer>
+</div>
+</body>
+</html>

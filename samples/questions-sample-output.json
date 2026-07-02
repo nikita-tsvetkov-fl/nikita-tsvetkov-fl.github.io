@@ -1,0 +1,87 @@
+[
+  {
+    "id": 1,
+    "question": "What is the derivative of $f(x) = x^2$?",
+    "type": "mcq",
+    "options": [
+      {
+        "label": "A",
+        "text": "$x$",
+        "correct": false
+      },
+      {
+        "label": "B",
+        "text": "$2x$",
+        "correct": true
+      },
+      {
+        "label": "C",
+        "text": "$x^2$",
+        "correct": false
+      },
+      {
+        "label": "D",
+        "text": "$2$",
+        "correct": false
+      }
+    ],
+    "answer": "B",
+    "points": 2
+  },
+  {
+    "id": 2,
+    "question": "The capital of France is Paris.",
+    "type": "mcq",
+    "options": [
+      {
+        "label": "A",
+        "text": "True",
+        "correct": true
+      },
+      {
+        "label": "B",
+        "text": "False",
+        "correct": false
+      }
+    ],
+    "answer": "A",
+    "points": 1
+  },
+  {
+    "id": 3,
+    "question": "Explain, in your own words, the difference between TCP and UDP.",
+    "type": "open",
+    "options": [],
+    "answer": null,
+    "points": null
+  },
+  {
+    "id": 4,
+    "question": "Which of the following are prime numbers?",
+    "type": "mcq",
+    "options": [
+      {
+        "label": "A",
+        "text": "$4$",
+        "correct": false
+      },
+      {
+        "label": "B",
+        "text": "$7$",
+        "correct": true
+      },
+      {
+        "label": "C",
+        "text": "$9$",
+        "correct": false
+      },
+      {
+        "label": "D",
+        "text": "$15$",
+        "correct": false
+      }
+    ],
+    "answer": "B",
+    "points": 3
+  }
+]

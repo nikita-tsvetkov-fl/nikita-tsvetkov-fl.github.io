@@ -1,0 +1,101 @@
+<!doctype html><html lang="en"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>ERC-4626 Vault NAV Reconciliation — demo</title>
+<style>
+:root{--bg:#0d1117;--card:#161b22;--line:#30363d;--text:#e6edf3;--mut:#9da7b3;--acc:#2f81f7;--ok:#3fb950;--warn:#d29922;--err:#f85149}
+*{box-sizing:border-box}
+body{margin:0;font-family:-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;background:var(--bg);color:var(--text);line-height:1.6}
+.wrap{max-width:880px;margin:0 auto;padding:0 18px 60px}
+h1{margin:24px 0 6px;font-size:26px}
+.tag{color:var(--mut);margin:0;font-size:16px}
+a{color:var(--acc);text-decoration:none}a:hover{text-decoration:underline}
+.panel{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:18px 20px;margin-top:18px}
+h2{font-size:18px;margin:0 0 12px}
+p{margin:8px 0}
+code{background:#0d1117;border:1px solid var(--line);border-radius:5px;padding:1px 6px;font-size:13px;color:var(--acc)}
+table{width:100%;border-collapse:collapse;font-size:13.5px;margin-top:6px}
+th,td{text-align:left;padding:7px 9px;border-bottom:1px solid var(--line)}
+th{color:var(--mut);font-weight:600;font-size:12px;text-transform:uppercase;letter-spacing:.04em}
+td.num{text-align:right;font-variant-numeric:tabular-nums}
+.ok{color:var(--ok)} .err{color:var(--err)}
+.flow{display:flex;flex-wrap:wrap;gap:8px;align-items:center;font-size:13px;color:var(--mut)}
+.flow .box{background:#0d1117;border:1px solid var(--line);border-radius:8px;padding:6px 11px;color:var(--text)}
+.flow .arr{color:var(--acc)}
+.stat{display:flex;gap:22px;flex-wrap:wrap}
+.stat div{font-size:13px;color:var(--mut)}
+.stat b{display:block;font-size:21px;color:var(--text)}
+.muted{color:var(--mut);font-size:13px}
+.note{border-left:3px solid var(--acc);padding-left:12px;color:var(--mut);font-size:13.5px}
+.hook{color:var(--warn)}
+pre{background:#0d1117;border:1px solid var(--line);border-radius:8px;padding:12px;overflow:auto;font-size:12.5px;margin:8px 0}
+</style></head><body><div class="wrap">
+
+<h1>ERC-4626 Vault NAV Reconciliation</h1>
+<p class="tag">Read-only on-chain audit of a tokenized vault's net asset value · raw JSON-RPC · zero trust in a single source</p>
+<p class="muted">A NAV automation / reconciliation primitive an RWA or DeFi product needs:
+pull live vault state, compute NAV-per-share, and cross-check it against the vault's own
+<code>convertToAssets()</code> preview so any pricing/accounting drift is flagged before it
+reaches investors or downstream reporting. The numbers below are from <b>real mainnet runs</b>, not mocked.</p>
+
+<div class="panel">
+<h2>How a check runs</h2>
+<div class="flow">
+  <span class="box">vault address</span><span class="arr">→</span>
+  <span class="box">raw <code>eth_call</code><br>(no web3.py, any RPC)</span><span class="arr">→</span>
+  <span class="box">read state<br>totalAssets / totalSupply</span><span class="arr">→</span>
+  <span class="box">NAV/share two ways</span><span class="arr">→</span>
+  <span class="box">reconcile vs<br>convertToAssets()</span><span class="arr">→</span>
+  <span class="box">OK / <span class="err">MISMATCH</span> + json</span>
+</div>
+<p class="muted" style="margin-top:12px">Dependency-light — <code>httpx</code> only, no node, no signing keys. Output is a human
+report or <code>--json</code> for a monitoring/alerting pipeline.</p>
+</div>
+
+<div class="panel">
+<h2>Live runs (Ethereum mainnet)</h2>
+<table>
+<thead><tr><th>Vault</th><th>Address</th><th class="num">NAV/share (computed)</th><th class="num">NAV/share (preview)</th><th class="num">Rel. diff</th><th>Status</th></tr></thead>
+<tbody>
+<tr><td>Savings DAI (sDAI)</td><td><code>0x83F2…BEeA</code></td><td class="num">1.1771372345</td><td class="num">1.1771372345</td><td class="num">0.000e+00</td><td class="ok">✓ reconciled</td></tr>
+<tr><td>Staked USDe (sUSDe)</td><td><code>0x9D39…497F</code></td><td class="num">1.2360000000</td><td class="num">1.2360000000</td><td class="num">0.000e+00</td><td class="ok">✓ reconciled</td></tr>
+</tbody>
+</table>
+<p class="muted">Computed <code>totalAssets/totalSupply</code> is cross-checked against the vault's own
+<code>convertToAssets(1 share)</code> preview. A non-zero relative diff beyond threshold returns <span class="err">MISMATCH</span>
+— the signal you alert on.</p>
+</div>
+
+<div class="panel">
+<h2>Sample report (sDAI)</h2>
+<pre>ERC-4626 NAV RECONCILIATION  @ block 25371287
+====================================================
+Vault        : Savings Dai (sDAI)
+Address      : 0x83F20F44975D03b1b09e64809B757c47f942BEeA
+Underlying   : 0x6b175474e89094c44da98b954eedeac495271d0f
+Decimals     : 18
+----------------------------------------------------
+Total assets : 175,929,741.650486
+Total supply : 149,455,591.492915 shares
+NAV/share    : 1.1771372345  (computed totalAssets/totalSupply)
+NAV/share    : 1.1771372345  (vault convertToAssets preview)
+Abs diff     : 0.000e+00
+Rel diff     : 0.000e+00
+----------------------------------------------------
+Status       : OK  &#10003; reconciled</pre>
+</div>
+
+<div class="panel">
+<h2>Where it fits in production</h2>
+<ul class="muted" style="margin:6px 0 0;padding-left:18px;line-height:1.8">
+<li>Schedule per block/interval, emit <code>--json</code> to a time-series store.</li>
+<li>Batch multiple vaults via multicall for efficiency.</li>
+<li>Wire <span class="err">MISMATCH</span> to alerting (Telegram / PagerDuty) and a reconciliation dashboard for share classes / pools.</li>
+<li>Extend to ERC-7540 async request lifecycle (pending deposit / redeem queues).</li>
+</ul>
+<p class="note" style="margin-top:14px">Read-only by design — it never holds keys or sends transactions. This is one of several
+Web3 building blocks I build to order (contract audit-assist, tests, NAV/oracle feeds, MetaMask/wagmi front-ends).</p>
+</div>
+
+<p class="muted" style="margin-top:22px"><a href="../../">&larr; Back to portfolio</a> · Nikita Tsvetkov — Web3 / automation / data</p>
+
+</div></body></html>

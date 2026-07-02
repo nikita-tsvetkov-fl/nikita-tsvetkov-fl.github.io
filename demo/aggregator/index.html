@@ -1,0 +1,146 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Контент-агрегатор: Telegram/Discord — демо</title>
+<style>
+  body{font:16px/1.55 -apple-system,Segoe UI,Roboto,sans-serif;margin:0;color:#1a1f29;background:#f5f7fa}
+  header{background:#0f172a;color:#fff;padding:32px 20px}
+  header h1{margin:0 0 8px;font-size:24px}
+  header p{margin:0;color:#94a3b8;max-width:760px}
+  main{max-width:1080px;margin:0 auto;padding:24px 16px 64px}
+  .how{background:#fff;border:1px solid #e2e8f0;border-radius:12px;padding:18px 22px;margin:20px 0}
+  .how b{color:#0f172a}
+  .how ul{margin:10px 0 0;padding-left:20px}
+  .card{background:#fff;border:1px solid #e2e8f0;border-radius:12px;padding:18px;margin:18px 0}
+  .card h3{margin:0 0 12px;font-size:17px}
+  .cols{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+  .col{border-radius:10px;padding:12px}
+  .before{background:#fef2f2;border:1px solid #fecaca}
+  .after{background:#f0fdf4;border:1px solid #bbf7d0}
+  .lbl{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;margin-bottom:8px;color:#475569}
+  pre{margin:0;white-space:pre-wrap;word-break:break-word;font:14px/1.5 ui-monospace,Menlo,Consolas,monospace}
+  @media(max-width:720px){.cols{grid-template-columns:1fr}}
+  footer{text-align:center;color:#64748b;font-size:13px;padding:24px}
+</style>
+</head>
+<body>
+<header>
+  <h1>Бот-агрегатор контента: каналы-источники → ваш Telegram + Discord</h1>
+  <p>Читает посты из выбранных каналов, автоматически вычищает чужие ссылки, упоминания
+  источников и призывы к покупке, оставляет только суть обновления, добавляет ваш бренд —
+  и публикует в ваш канал и Discord. Ниже — живые примеры работы движка нормализации.</p>
+</header>
+<main>
+  <div class="how">
+    <b>Что делает движок на каждом посте:</b>
+    <ul>
+      <li>вырезает ссылки (http/www/домены) и @упоминания чужих каналов;</li>
+      <li>удаляет строки с призывами к покупке и упоминаниями источника;</li>
+      <li>убирает чужие цены и сроки, чистит хэштеги (кроме разрешённых);</li>
+      <li>оставляет только информацию об обновлении и подставляет ваш подвал;</li>
+      <li>пейсинг и дедупликация против блокировок — публикация как у живого редактора.</li>
+    </ul>
+  </div>
+  
+    <div class="card">
+      <h3>Релиз графического редактора</h3>
+      <div class="cols">
+        <div class="col before">
+          <div class="lbl">Источник (как есть)</div>
+          <pre>🔥 Photora 7.2 уже вышла! #update #release
+
+Что нового в версии 7.2:
+- AI-ластик для фона стал в 2 раза быстрее
+- добавлена поддержка HEIC и AVIF
+- исправлены вылеты при экспорте 4K
+
+💸 Лицензия у нас всего 1490 руб на 30 дней!
+Купить можно тут: https://leaks-store.example/photora
+Пишите в личку @AppLeaksRU — поможем с установкой
+Подписывайтесь на SoftHub, тут все сливы первыми! #leak #cheap</pre>
+        </div>
+        <div class="col after">
+          <div class="lbl">После агрегатора → ваш канал</div>
+          <pre>🔥 Photora 7.2 уже вышла! #update #release
+
+Что нового в версии 7.2:
+- AI-ластик для фона стал в 2 раза быстрее
+- добавлена поддержка HEIC и AVIF
+- исправлены вылеты при экспорте 4K
+
+🔔 Канал «Апдейты Софта» — только новости версий.
+Вопросы по подписке: @your_channel</pre>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>Обновление антивируса</h3>
+      <div class="cols">
+        <div class="col before">
+          <div class="lbl">Источник (как есть)</div>
+          <pre>⚡️ Большое обновление NovaGuard 11
+
+Версия 11.0 принесла:
+1) новый движок поведенческого анализа
+2) защиту от шифровальщиков в реальном времени
+3) расход батареи снижен на 25%
+
+Цена вопроса — 7 дней 350₽, 30 дней 990₽ 💰
+Заказать тут: www.premium-soft.example/nova
+buy now: @leaks-store
+#antivirus #скидка</pre>
+        </div>
+        <div class="col after">
+          <div class="lbl">После агрегатора → ваш канал</div>
+          <pre>⚡️ Большое обновление NovaGuard 11
+
+Версия 11.0 принесла:
+1) новый движок поведенческого анализа
+2) защиту от шифровальщиков в реальном времени
+3) расход батареи снижен на 25%
+
+🔔 Канал «Апдейты Софта» — только новости версий.
+Вопросы по подписке: @your_channel</pre>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>Патч игрового лаунчера</h3>
+      <div class="cols">
+        <div class="col before">
+          <div class="lbl">Источник (как есть)</div>
+          <pre>Вышел патч 3.4.1 для лаунчера
+
+Изменения патча:
+• ускорена загрузка библиотеки игр
+• починена синхронизация облачных сохранений
+• мелкие правки интерфейса
+
+Доступ к премиум-сборке от SoftHub: ссылка в шапке профиля
+Лицензия 1 день — 99 руб, выгодно!
+#Photora #launcher</pre>
+        </div>
+        <div class="col after">
+          <div class="lbl">После агрегатора → ваш канал</div>
+          <pre>Вышел патч 3.4.1 для лаунчера
+
+Изменения патча:
+• ускорена загрузка библиотеки игр
+• починена синхронизация облачных сохранений
+• мелкие правки интерфейса
+
+#Photora
+
+🔔 Канал «Апдейты Софта» — только новости версий.
+Вопросы по подписке: @your_channel</pre>
+        </div>
+      </div>
+    </div>
+</main>
+<footer>Демо переиспользуемого движка · правила настраиваются под ваши каналы в config.json</footer>
+</body>
+</html>

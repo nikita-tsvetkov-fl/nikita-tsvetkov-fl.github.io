@@ -1,0 +1,13 @@
+{
+  "name": "AI-трекер самонаблюдения",
+  "short_name": "AI-трекер",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#f4f7f6",
+  "theme_color": "#2e7d6b",
+  "description": "Дневник самонаблюдения клиента: опросник, авто-отчёт с рекомендациями и сводка для специалиста.",
+  "icons": [
+    {"src": "../../img/leadbot-demo-preview.png", "sizes": "192x192", "type": "image/png"}
+  ]
+}

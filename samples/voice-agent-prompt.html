@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Промт-инжиниринг голосового ИИ-агента (клиника) — образец работы</title>
+<style>
+  :root{--bg:#0f1320;--card:#171c2e;--ink:#e8ecf6;--mut:#9aa6c4;--acc:#5b8cff;--ok:#37c98a;--warn:#ffb84d;--crit:#ff6b6b;--line:#283050}
+  *{box-sizing:border-box}
+  body{margin:0;font:16px/1.6 -apple-system,Segoe UI,Roboto,Arial,sans-serif;background:var(--bg);color:var(--ink)}
+  .wrap{max-width:940px;margin:0 auto;padding:32px 20px 80px}
+  header{border-bottom:1px solid var(--line);padding-bottom:20px;margin-bottom:28px}
+  .tag{display:inline-block;font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--acc);border:1px solid var(--acc);border-radius:20px;padding:3px 12px;margin-bottom:14px}
+  h1{font-size:27px;margin:0 0 8px}
+  h2{font-size:21px;margin:38px 0 14px}
+  h3{font-size:17px;margin:22px 0 8px}
+  .sub{color:var(--mut);font-size:15px}
+  .note{background:#1b2138;border:1px solid var(--line);border-left:3px solid var(--acc);border-radius:8px;padding:12px 16px;color:var(--mut);font-size:14px;margin:18px 0}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:18px 20px;margin:14px 0}
+  .cols{display:flex;gap:16px;flex-wrap:wrap}
+  .cols>.card{flex:1;min-width:280px;margin:0}
+  table{width:100%;border-collapse:collapse;margin:14px 0;font-size:14px}
+  th,td{text-align:left;padding:9px 12px;border-bottom:1px solid var(--line);vertical-align:top}
+  th{color:var(--mut);font-weight:600;font-size:13px;text-transform:uppercase;letter-spacing:.04em}
+  .pill{display:inline-block;font-size:12px;font-weight:700;border-radius:6px;padding:2px 9px;white-space:nowrap}
+  .p-crit{background:rgba(255,107,107,.15);color:var(--crit)}
+  .p-ok{background:rgba(55,201,138,.15);color:var(--ok)}
+  .p-acc{background:rgba(91,140,255,.15);color:var(--acc)}
+  code{background:#0c1020;padding:1px 6px;border-radius:4px;color:#9fc1ff;font-size:13px}
+  pre{background:#0c1020;border:1px solid var(--line);border-radius:8px;padding:14px 16px;overflow:auto;font-size:13px;color:#cfe0ff;white-space:pre-wrap}
+  ul{margin:8px 0;padding-left:20px}li{margin:5px 0}
+  .flow{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:10px 0}
+  .step{background:#0c1020;border:1px solid var(--line);border-radius:8px;padding:8px 12px;font-size:13px}
+  .arr{color:var(--acc);font-weight:700}
+  footer{margin-top:50px;border-top:1px solid var(--line);padding-top:18px;color:var(--mut);font-size:13px}
+  footer a{color:var(--acc);text-decoration:none}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header>
+  <span class="tag">Образец работы · Промт-инжиниринг · Голосовой ИИ-агент</span>
+  <h1>Голосовой ИИ-агент для клиники — промт под ключ (без кода)</h1>
+  <p class="sub">Демонстрация того, как я собираю промт для голосового агента на готовом сервисе (Vapi / ElevenLabs / LP Tracker и т.п.) — на стороне личного кабинета, со связкой в CRM клиента. Кейс-образец: медицинская клиника (учебный, не реальный заказчик).</p>
+</header>
+
+<div class="note">
+  <b>Методология.</b> Не «простыня инструкций», а инженерная конструкция: <b>состояния диалога → правила перехода → тон → выгрузка в CRM</b>, плюс RAG-база, чтобы агент отвечал строго по материалам клиента, а не выдумывал. Это даёт предсказуемый диалог без срывов и юридически безопасную работу в чувствительной нише (медицина).
+</div>
+
+<h2>Почему так работает</h2>
+<div class="cols">
+  <div class="card"><h3>Состояния, а не «простыня»</h3><p class="sub">Агент всегда знает, на каком шаге он находится и куда переходить — меньше срывов и зацикливаний диалога.</p></div>
+  <div class="card"><h3>Жёсткие стоп-правила</h3><p class="sub">Для медицины: никаких диагнозов и дозировок. Юридически и репутационно безопасно по умолчанию.</p></div>
+  <div class="card"><h3>Ответы только из RAG</h3><p class="sub">Нет данных в базе → «уточню и перезвоню» + фиксация заявки, а не выдумка факта.</p></div>
+  <div class="card"><h3>Готовая выгрузка в CRM</h3><p class="sub">Каждое поле карточки определено заранее — заявка не теряется и попадает менеджеру тёплой.</p></div>
+</div>
+
+<h2>1. Сценарий ВХОДЯЩИХ (реактивный)</h2>
+<p class="sub">Приём входящего звонка: выявить запрос, ответить по базе, записать на приём.</p>
+<div class="flow">
+  <span class="step">Приветствие</span><span class="arr">→</span>
+  <span class="step">Выявление потребности</span><span class="arr">→</span>
+  <span class="step">Ответ по базе (RAG)</span><span class="arr">→</span>
+  <span class="step">Запись на приём</span><span class="arr">→</span>
+  <span class="step">Закрытие → CRM</span>
+</div>
+<p class="sub">Из любого состояния вызывается <b>Отработка возражений</b> («дорого» / «подумаю» / «далеко»).</p>
+<div class="card">
+  <h3>Жёсткие правила (фрагмент SYSTEM-промта)</h3>
+  <pre>Никаких диагнозов, дозировок, прогнозов лечения.
+На медицинские вопросы: «Это уточнит врач на приёме, давайте я вас запишу».
+Цены, услуги, адрес, график — ТОЛЬКО из базы знаний (RAG).
+Нет данных → «Уточню и перезвоню», фиксируешь вопрос в заявку.
+Персональные данные подтверждаешь по буквам/цифрам (имя, телефон).
+Один шаг за раз: не вываливаешь весь список услуг сразу.</pre>
+</div>
+
+<h2>2. Сценарий ОБЗВОНА базы (проактивный)</h2>
+<p class="sub">Агент сам звонит по базе: реактивация, напоминание о недозаписи, акция, возврат «спящих» пациентов — с уважением к «нет».</p>
+<div class="flow">
+  <span class="step">Открытие (≤2 фразы)</span><span class="arr">→</span>
+  <span class="step">Проверка удобства</span><span class="arr">→</span>
+  <span class="step">Оффер</span><span class="arr">→</span>
+  <span class="step">Работа с реакцией</span><span class="arr">→</span>
+  <span class="step">Запись</span><span class="arr">→</span>
+  <span class="step">Закрытие → CRM</span>
+</div>
+<div class="card">
+  <h3>Ключевые переходы (комплаенс обзвона)</h3>
+  <ul>
+    <li><b>«Кто это? / Откуда номер?»</b> → клиника + причина + «ваш контакт у нас в базе как пациента». Не успокоился → извиниться, завершить, пометить.</li>
+    <li><b>Явный отказ / «удалите из базы»</b> → подтвердить, статус <span class="pill p-crit">стоп-лист</span>, конец. Согласие на обзвон уважается всегда.</li>
+    <li><b>Автоответчик</b> → короткое сообщение из шаблона, статус «ВМ».</li>
+  </ul>
+</div>
+
+<h2>3. База знаний → RAG-чанки</h2>
+<p class="sub">Исходники клиента (прайс, расписание, скрипты продаж, транскрибации звонков) раскладываются в самодостаточные чанки под векторный поиск. Агент отвечает строго по ним.</p>
+<div class="card">
+<pre>## CHUNK: Услуги и цены (Кардиология)
+- Первичный приём кардиолога — 2 500 ₽, 30 мин.
+- ЭКГ с расшифровкой — 1 200 ₽.
+- Акция месяца: первичный приём + ЭКГ — 3 200 ₽ (вместо 3 700 ₽).
+
+## CHUNK: Расписание и адрес
+- Адрес: г. {CITY}, ул. {STREET}, д. {N}. Вход со двора, парковка.
+- График: пн–пт 8:00–20:00, сб 9:00–15:00, вс — выходной.
+- Кардиолог Иванова И.И.: пн, ср, пт.
+
+## CHUNK: FAQ
+- «Нужна ли подготовка к ЭКГ?» — Спец. подготовки нет; за час избегайте
+  кофе и физнагрузки.
+- «Принимаете по ДМС?» — Да, работаем с {INSURERS}. Уточните полис при записи.</pre>
+</div>
+
+<h2>4. Выгрузка в CRM</h2>
+<p class="sub">Поля карточки определены заранее — заявка попадает в CRM структурированной.</p>
+<table>
+  <tr><th>Поле</th><th>Значения / пример</th></tr>
+  <tr><td><code>телефон</code></td><td>+7 ...</td></tr>
+  <tr><td><code>имя</code></td><td>подтверждено по буквам</td></tr>
+  <tr><td><code>результат</code></td><td><span class="pill p-ok">записан</span> <span class="pill p-acc">перезвон</span> <span class="pill p-crit">отказ / стоп-лист</span> · ВМ · недозвон</td></tr>
+  <tr><td><code>дата_время_записи</code></td><td>2026-06-30 11:00, врач Иванова И.И.</td></tr>
+  <tr><td><code>согласие_на_обзвон</code></td><td>да / нет</td></tr>
+  <tr><td><code>источник</code></td><td>«входящий, ИИ-агент» / «обзвон, кампания {CAMPAIGN}»</td></tr>
+</table>
+
+<h2>Как адаптирую под вас</h2>
+<div class="note">
+  Подставляю ваш сервис (Vapi / ElevenLabs / LP Tracker), вашу CRM, прайс и скрипты. Промт докручивается на ролевках и реальных звонках до целевой конверсии. Никакого кода у вас на стороне — всё в личном кабинете сервиса, на ваших доступах.
+</div>
+
+<footer>
+  Образец промт-инжиниринга · Никита Цветков · <a href="../index.html">← все работы в портфолио</a> · оплата в крипте (USDT / BTC)
+</footer>
+</div>
+</body>
+</html>

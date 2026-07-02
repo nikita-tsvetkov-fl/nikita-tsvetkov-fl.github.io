@@ -1,0 +1,149 @@
+<!doctype html><html lang="ru"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>LLM-шлюз (аналог OpenRouter) — демо</title>
+<style>
+:root{--bg:#0d1117;--card:#161b22;--line:#30363d;--text:#e6edf3;--mut:#9da7b3;--acc:#2f81f7;--ok:#3fb950;--warn:#d29922;--err:#f85149}
+*{box-sizing:border-box}
+body{margin:0;font-family:-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;background:var(--bg);color:var(--text);line-height:1.6}
+.wrap{max-width:880px;margin:0 auto;padding:0 18px 60px}
+h1{margin:24px 0 6px;font-size:26px}
+.tag{color:var(--mut);margin:0;font-size:16px}
+a{color:var(--acc);text-decoration:none}a:hover{text-decoration:underline}
+.panel{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:18px 20px;margin-top:18px}
+h2{font-size:18px;margin:0 0 12px}
+p{margin:8px 0}
+code{background:#0d1117;border:1px solid var(--line);border-radius:5px;padding:1px 6px;font-size:13px;color:var(--acc)}
+table{width:100%;border-collapse:collapse;font-size:13.5px;margin-top:6px}
+th,td{text-align:left;padding:7px 9px;border-bottom:1px solid var(--line)}
+th{color:var(--mut);font-weight:600;font-size:12px;text-transform:uppercase;letter-spacing:.04em}
+td.num{text-align:right;font-variant-numeric:tabular-nums}
+.ok{color:var(--ok)} .err{color:var(--err)}
+.badge{font-size:11px;border-radius:10px;padding:1px 7px;margin-left:6px}
+.badge.fb{background:#3a2d12;color:var(--warn);border:1px solid #5c4a1f}
+.flow{display:flex;flex-wrap:wrap;gap:8px;align-items:center;font-size:13px;color:var(--mut)}
+.flow .box{background:#0d1117;border:1px solid var(--line);border-radius:8px;padding:6px 11px;color:var(--text)}
+.flow .arr{color:var(--acc)}
+.stat{display:flex;gap:22px;flex-wrap:wrap}
+.stat div{font-size:13px;color:var(--mut)}
+.stat b{display:block;font-size:21px;color:var(--text)}
+.muted{color:var(--mut);font-size:13px}
+.note{border-left:3px solid var(--acc);padding-left:12px;color:var(--mut);font-size:13.5px}
+.hook{color:var(--warn)}
+pre{background:#0d1117;border:1px solid var(--line);border-radius:8px;padding:12px;overflow:auto;font-size:12.5px;margin:8px 0}
+</style></head><body><div class="wrap">
+
+<h1>LLM-шлюз — агрегатор нейросетей (аналог OpenRouter / VseLLM)</h1>
+<p class="tag">Единый OpenAI-совместимый API к нескольким провайдерам · ключи · баланс · учёт токенов · биллинг · фолбэк</p>
+<p class="muted">Демонстрация ядра MVP. Данные на странице — из реального прогона движка
+(<code>demo_run.py</code>), а не нарисованы. Провайдеры в стенде замоканы; точки
+подключения боевых вызовов помечены <span class="hook">PROD-HOOK</span>.</p>
+
+<div class="panel">
+<h2>Как устроен запрос</h2>
+<div class="flow">
+  <span class="box">client <code>Bearer sk-…</code></span><span class="arr">→</span>
+  <span class="box">auth по ключу + баланс</span><span class="arr">→</span>
+  <span class="box">router: model→provider</span><span class="arr">→</span>
+  <span class="box">провайдер<br><span class="hook">PROD-HOOK: LiteLLM</span></span><span class="arr">→</span>
+  <span class="box">usage→cost, списание</span><span class="arr">→</span>
+  <span class="box">OpenAI-ответ + ledger</span>
+</div>
+<p class="muted" style="margin-top:12px">Доступные модели: <code>gpt-4o-mini</code> · <code>gpt-4o</code> · <code>claude-3-5-sonnet</code> · <code>claude-3-5-haiku</code> · <code>gemini-1.5-pro</code> · <code>deepseek-chat</code>. Маршрут и фолбэк-цепочки задаются конфигом — добавить провайдера = строка в карте.</p>
+</div>
+
+<div class="panel">
+<h2>Живой прогон ядра</h2>
+<div class="stat">
+  <div><b>4</b>запросов обслужено</div>
+  <div><b>$0.001231</b>списано с баланса</div>
+  <div><b>$4.998769</b>остаток на ключе</div>
+  <div><b>20%</b>наценка шлюза</div>
+</div>
+<table>
+<thead><tr><th>Запрошено</th><th>Обслужено</th><th>Токены</th><th>Стоимость</th><th>Баланс после</th><th>HTTP</th></tr></thead>
+<tbody>
+<tr>
+          <td><code>gpt-4o-mini</code></td>
+          <td>gpt-4o-mini</td>
+          <td class="num">39</td>
+          <td class="num">$0.000022</td>
+          <td class="num">$4.999978</td>
+          <td class="ok">200</td></tr>
+<tr>
+          <td><code>claude-3-5-sonnet</code></td>
+          <td>claude-3-5-sonnet</td>
+          <td class="num">43</td>
+          <td class="num">$0.000587</td>
+          <td class="num">$4.999391</td>
+          <td class="ok">200</td></tr>
+<tr>
+          <td><code>deepseek-chat</code></td>
+          <td>deepseek-chat</td>
+          <td class="num">41</td>
+          <td class="num">$0.000042</td>
+          <td class="num">$4.999349</td>
+          <td class="ok">200</td></tr>
+<tr>
+          <td><code>gpt-4o</code></td>
+          <td>claude-3-5-sonnet<span class="badge fb">fallback</span></td>
+          <td class="num">41</td>
+          <td class="num">$0.000580</td>
+          <td class="num">$4.998769</td>
+          <td class="ok">200</td></tr>
+<tr>
+          <td><code>model-does-not-exist</code></td>
+          <td colspan="4" class="err">unknown model: model-does-not-exist</td>
+          <td class="err">404</td></tr>
+</tbody></table>
+<p class="note" style="margin-top:14px">Строка <span class="badge fb">fallback</span>: провайдер OpenAI был помечен «лежит» —
+запрос <code>gpt-4o</code> автоматически ушёл на <code>claude-3-5-sonnet</code> по фолбэк-цепочке, клиент ответ получил.
+Неизвестная модель — корректный <code>404</code>, баланс не тронут.</p>
+</div>
+
+<div class="panel">
+<h2>Прайс и учёт стоимости</h2>
+<p class="muted">Раздельная цена вход/выход (USD за 1M токенов) по каждой модели; со шлюзовой наценкой 20% — это маржа сервиса. Списание идёт по факту usage из ответа.</p>
+<table>
+<thead><tr><th>Модель</th><th>Провайдер</th><th>Вход /1M</th><th>Выход /1M</th></tr></thead>
+<tbody>
+<tr><td><code>gpt-4o-mini</code></td><td>openai</td>
+      <td class="num">$0.150</td><td class="num">$0.600</td></tr>
+<tr><td><code>gpt-4o</code></td><td>openai</td>
+      <td class="num">$2.500</td><td class="num">$10.000</td></tr>
+<tr><td><code>claude-3-5-sonnet</code></td><td>anthropic</td>
+      <td class="num">$3.000</td><td class="num">$15.000</td></tr>
+<tr><td><code>claude-3-5-haiku</code></td><td>anthropic</td>
+      <td class="num">$0.800</td><td class="num">$4.000</td></tr>
+<tr><td><code>gemini-1.5-pro</code></td><td>google</td>
+      <td class="num">$1.250</td><td class="num">$5.000</td></tr>
+<tr><td><code>deepseek-chat</code></td><td>deepseek</td>
+      <td class="num">$0.270</td><td class="num">$1.100</td></tr>
+</tbody></table>
+</div>
+
+<div class="panel">
+<h2>OpenAI-совместимый ответ</h2>
+<p class="muted">Полностью совместим с клиентами OpenAI SDK — меняется только base_url. Поле <code>x_gateway</code> добавляет прозрачность: какая модель реально обслужила, был ли фолбэк, остаток баланса.</p>
+<pre>POST /v1/chat/completions
+Authorization: Bearer sk-…
+{ "model": "gpt-4o", "messages": [{"role":"user","content":"…"}] }
+
+→ { "object":"chat.completion", "model":"claude-3-5-sonnet",
+     "choices":[{ "message":{"role":"assistant","content":"…"} }],
+     "usage":{ "prompt_tokens":…, "completion_tokens":…, "cost_usd":… },
+     "x_gateway":{ "requested_model":"gpt-4o", "served_model":"claude-3-5-sonnet",
+                   "fallback_used":true, "balance_after":… } }</pre>
+</div>
+
+<div class="panel">
+<h2>Что в боевом MVP (этапами)</h2>
+<p class="muted">
+<b>Этап 1</b> — шлюз + маршрутизация + выпуск API-ключей (это ядро на странице).<br>
+<b>Этап 2</b> — личный кабинет, история запросов, учёт токенов и стоимости по моделям.<br>
+<b>Этап 3</b> — биллинг: приём рублёвой оплаты (ЮKassa/CloudPayments webhook → пополнение баланса), PostgreSQL, Docker-compose, aiogram-бот уведомлений.<br>
+Маршрутизацию и фолбэк в проде закрывает LiteLLM (proxy-режим) — даёт OpenAI-совместимый <code>/v1</code> и подключение OpenAI/Anthropic/Gemini/DeepSeek из коробки, поверх — наш слой ключей/баланса/биллинга.</p>
+<p class="muted">Деплой — на инфраструктуре заказчика (его VPS, его ключи провайдеров).</p>
+</div>
+
+<p class="muted" style="margin-top:24px">Никита Цветков · разработка ИИ-сервисов и автоматизации · Telegram <code>@nikita_tsvetkov_fl</code></p>
+</div></body></html>

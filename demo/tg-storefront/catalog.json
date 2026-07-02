@@ -1,0 +1,340 @@
+{
+  "generated_from": "Telegram channel ingest (demo)",
+  "total": 16,
+  "categories": {
+    "женское": 6,
+    "мужское": 5,
+    "ювелирка": 5
+  },
+  "items": [
+    {
+      "id": "e88597bfae4c",
+      "title": "Платье миди шёлковое изумрудное",
+      "brand": "Lumier",
+      "price": 8900,
+      "old_price": 12700,
+      "discount": 30,
+      "category": "женское",
+      "sizes": [
+        "XS",
+        "S",
+        "M",
+        "L"
+      ],
+      "tags": [
+        "новинка",
+        "женское",
+        "скидка"
+      ],
+      "photo": "p01",
+      "src_msg_id": 1201,
+      "channel": "@boutique_demo"
+    },
+    {
+      "id": "108ca48cdd23",
+      "title": "Рубашка мужская оксфорд белая",
+      "brand": "Northfield",
+      "price": 4200,
+      "old_price": null,
+      "discount": null,
+      "category": "мужское",
+      "sizes": [
+        "S",
+        "M",
+        "L",
+        "XL"
+      ],
+      "tags": [
+        "мужское",
+        "базовыйгардероб"
+      ],
+      "photo": "p02",
+      "src_msg_id": 1202,
+      "channel": "@boutique_demo"
+    },
+    {
+      "id": "1d390a63cdff",
+      "title": "Серьги-пусеты с бриллиантом 0.2ct, золото 585",
+      "brand": "AuraGold",
+      "price": 34500,
+      "old_price": null,
+      "discount": null,
+      "category": "ювелирка",
+      "sizes": [],
+      "tags": [
+        "ювелирка",
+        "золото",
+        "подарок"
+      ],
+      "photo": "p03",
+      "src_msg_id": 1203,
+      "channel": "@boutique_demo"
+    },
+    {
+      "id": "7aa61ff400a5",
+      "title": "Сумка-кроссбоди кожаная карамель",
+      "brand": "Lumen",
+      "price": 6700,
+      "old_price": 8900,
+      "discount": 25,
+      "category": "женское",
+      "sizes": [],
+      "tags": [
+        "женское",
+        "аксессуары",
+        "скидка"
+      ],
+      "photo": "p04",
+      "src_msg_id": 1204,
+      "channel": "@boutique_demo"
+    },
+    {
+      "id": "5dce54aba8f1",
+      "title": "Костюм мужской шерсть тёмно-синий",
+      "brand": "Northfield",
+      "price": 21900,
+      "old_price": null,
+      "discount": null,
+      "category": "мужское",
+      "sizes": [
+        "46",
+        "48",
+        "50",
+        "52"
+      ],
+      "tags": [
+        "мужское",
+        "офис"
+      ],
+      "photo": "p05",
+      "src_msg_id": 1205,
+      "channel": "@boutique_demo"
+    },
+    {
+      "id": "e5711a16018c",
+      "title": "Подвеска «Сердце» серебро 925 с фианитами",
+      "brand": "AuraGold",
+      "price": 3400,
+      "old_price": 4900,
+      "discount": 31,
+      "category": "ювелирка",
+      "sizes": [],
+      "tags": [
+        "ювелирка",
+        "серебро",
+        "скидка"
+      ],
+      "photo": "p06",
+      "src_msg_id": 1206,
+      "channel": "@boutique_demo"
+    },
+    {
+      "id": "d1bb908fa04f",
+      "title": "Блуза женская сатиновая пудровая",
+      "brand": "Lumier",
+      "price": 5600,
+      "old_price": null,
+      "discount": null,
+      "category": "женское",
+      "sizes": [
+        "XS",
+        "S",
+        "M"
+      ],
+      "tags": [
+        "женское",
+        "новинка"
+      ],
+      "photo": "p07",
+      "src_msg_id": 1207,
+      "channel": "@boutique_demo"
+    },
+    {
+      "id": "2eb4b95ee32a",
+      "title": "Кроссовки мужские кожаные белые",
+      "brand": "Stride",
+      "price": 9800,
+      "old_price": 12000,
+      "discount": 18,
+      "category": "мужское",
+      "sizes": [
+        "41",
+        "42",
+        "43",
+        "44",
+        "45"
+      ],
+      "tags": [
+        "мужское",
+        "обувь",
+        "скидка"
+      ],
+      "photo": "p08",
+      "src_msg_id": 1208,
+      "channel": "@boutique_demo"
+    },
+    {
+      "id": "5b5c054017a6",
+      "title": "Кольцо помолвочное золото 585 с бриллиантом 0.3ct",
+      "brand": "AuraGold",
+      "price": 62000,
+      "old_price": null,
+      "discount": null,
+      "category": "ювелирка",
+      "sizes": [],
+      "tags": [
+        "ювелирка",
+        "золото",
+        "помолвка"
+      ],
+      "photo": "p09",
+      "src_msg_id": 1210,
+      "channel": "@boutique_demo"
+    },
+    {
+      "id": "3af9c5418f93",
+      "title": "Юбка-карандаш твидовая графит",
+      "brand": "Lumier",
+      "price": 6200,
+      "old_price": null,
+      "discount": null,
+      "category": "женское",
+      "sizes": [
+        "S",
+        "M",
+        "L"
+      ],
+      "tags": [
+        "женское",
+        "офис"
+      ],
+      "photo": "p10",
+      "src_msg_id": 1211,
+      "channel": "@boutique_demo"
+    },
+    {
+      "id": "3a375c91910c",
+      "title": "Пиджак мужской лён бежевый",
+      "brand": "Northfield",
+      "price": 13400,
+      "old_price": 16800,
+      "discount": 20,
+      "category": "мужское",
+      "sizes": [
+        "48",
+        "50",
+        "52"
+      ],
+      "tags": [
+        "мужское",
+        "лето",
+        "скидка"
+      ],
+      "photo": "p11",
+      "src_msg_id": 1212,
+      "channel": "@boutique_demo"
+    },
+    {
+      "id": "c4918688063b",
+      "title": "Браслет-цепь серебро 925",
+      "brand": "AuraGold",
+      "price": 2900,
+      "old_price": null,
+      "discount": null,
+      "category": "ювелирка",
+      "sizes": [],
+      "tags": [
+        "ювелирка",
+        "серебро"
+      ],
+      "photo": "p12",
+      "src_msg_id": 1213,
+      "channel": "@boutique_demo"
+    },
+    {
+      "id": "8a13297d5d46",
+      "title": "Туфли женские замшевые бордовые на каблуке",
+      "brand": "Lumen",
+      "price": 7300,
+      "old_price": null,
+      "discount": null,
+      "category": "женское",
+      "sizes": [
+        "36",
+        "37",
+        "38",
+        "39",
+        "40"
+      ],
+      "tags": [
+        "женское",
+        "обувь"
+      ],
+      "photo": "p13",
+      "src_msg_id": 1215,
+      "channel": "@boutique_demo"
+    },
+    {
+      "id": "1aafb6b4a76b",
+      "title": "Джемпер мужской меринос серый",
+      "brand": "Stride",
+      "price": 7900,
+      "old_price": 9500,
+      "discount": 17,
+      "category": "мужское",
+      "sizes": [
+        "S",
+        "M",
+        "L",
+        "XL"
+      ],
+      "tags": [
+        "мужское",
+        "скидка"
+      ],
+      "photo": "p14",
+      "src_msg_id": 1216,
+      "channel": "@boutique_demo"
+    },
+    {
+      "id": "725b9a003b0d",
+      "title": "Серьги-кольца золото 585 матовые",
+      "brand": "AuraGold",
+      "price": 18700,
+      "old_price": null,
+      "discount": null,
+      "category": "ювелирка",
+      "sizes": [],
+      "tags": [
+        "ювелирка",
+        "золото",
+        "новинка"
+      ],
+      "photo": "p15",
+      "src_msg_id": 1217,
+      "channel": "@boutique_demo"
+    },
+    {
+      "id": "b4d133f07e4a",
+      "title": "Платье вечернее в пол чёрное со шлейфом",
+      "brand": "Lumier",
+      "price": 15900,
+      "old_price": 21000,
+      "discount": 24,
+      "category": "женское",
+      "sizes": [
+        "S",
+        "M",
+        "L"
+      ],
+      "tags": [
+        "женское",
+        "вечернее",
+        "скидка"
+      ],
+      "photo": "p16",
+      "src_msg_id": 1218,
+      "channel": "@boutique_demo"
+    }
+  ]
+}

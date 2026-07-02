@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<meta name="theme-color" content="#2e7d6b">
+<title>AI-трекер самонаблюдения — демо</title>
+<link rel="manifest" href="manifest.webmanifest">
+<style>
+  :root{--bg:#f4f7f6;--card:#fff;--brand:#2e7d6b;--brand2:#3a9e88;--ink:#1d2b28;--mut:#6b7d78;--warn:#c0563b;--ok:#2e7d6b;--line:#e3eae8}
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  body{margin:0;font-family:-apple-system,Segoe UI,Roboto,Arial,sans-serif;background:var(--bg);color:var(--ink);line-height:1.5}
+  .wrap{max-width:520px;margin:0 auto;min-height:100vh;display:flex;flex-direction:column}
+  header{background:linear-gradient(135deg,var(--brand),var(--brand2));color:#fff;padding:18px 18px 14px;position:sticky;top:0;z-index:5}
+  header h1{font-size:18px;margin:0 0 2px}
+  header p{margin:0;font-size:12px;opacity:.9}
+  .bar{height:6px;background:rgba(255,255,255,.25);border-radius:6px;margin-top:12px;overflow:hidden}
+  .bar i{display:block;height:100%;background:#fff;width:0;transition:width .35s}
+  main{flex:1;padding:16px}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:16px;margin-bottom:14px;box-shadow:0 1px 2px rgba(0,0,0,.03)}
+  .sec-tag{display:inline-block;font-size:11px;font-weight:700;color:var(--brand);background:#e6f2ef;padding:3px 10px;border-radius:20px;margin-bottom:10px;letter-spacing:.3px}
+  .q{font-size:16px;font-weight:600;margin:0 0 14px}
+  .opt{display:flex;align-items:center;gap:12px;border:1.5px solid var(--line);border-radius:12px;padding:13px 14px;margin-bottom:9px;cursor:pointer;transition:.15s;font-size:15px}
+  .opt:active{transform:scale(.99)}
+  .opt.sel{border-color:var(--brand);background:#eef6f4}
+  .opt .dot{width:20px;height:20px;border-radius:50%;border:2px solid #c7d4d0;flex:none}
+  .opt.sel .dot{border-color:var(--brand);background:var(--brand);box-shadow:inset 0 0 0 3px #fff}
+  .scale{display:flex;gap:7px;justify-content:space-between}
+  .scale button{flex:1;border:1.5px solid var(--line);background:#fff;border-radius:10px;padding:12px 0;font-size:16px;font-weight:700;color:var(--ink);cursor:pointer}
+  .scale button.sel{background:var(--brand);color:#fff;border-color:var(--brand)}
+  .scale-lbl{display:flex;justify-content:space-between;font-size:11px;color:var(--mut);margin-top:6px}
+  .nav{display:flex;gap:10px;margin-top:4px}
+  button.btn{flex:1;border:0;border-radius:12px;padding:15px;font-size:15px;font-weight:700;cursor:pointer}
+  .btn.primary{background:var(--brand);color:#fff}
+  .btn.primary:disabled{opacity:.4}
+  .btn.ghost{background:#e9efed;color:var(--brand)}
+  .rep h2{font-size:17px;margin:2px 0 12px}
+  .metric{display:flex;align-items:center;gap:12px;padding:11px 0;border-bottom:1px solid var(--line)}
+  .metric:last-child{border:0}
+  .metric .nm{flex:1;font-size:14px}
+  .gauge{width:120px;height:8px;background:#eef1f0;border-radius:6px;overflow:hidden}
+  .gauge i{display:block;height:100%;border-radius:6px}
+  .score{font-weight:800;font-size:14px;width:38px;text-align:right}
+  .rec{display:flex;gap:10px;padding:11px 0;border-bottom:1px dashed var(--line);font-size:14px}
+  .rec:last-child{border:0}
+  .rec .ic{flex:none}
+  .ai-note{font-size:12px;color:var(--mut);background:#f0f5f4;border-radius:10px;padding:10px 12px;margin-top:8px}
+  .tabs{display:flex;background:#e9efed;border-radius:12px;padding:4px;margin-bottom:14px}
+  .tabs button{flex:1;border:0;background:none;padding:10px;border-radius:9px;font-weight:700;font-size:13px;color:var(--mut);cursor:pointer}
+  .tabs button.on{background:#fff;color:var(--brand);box-shadow:0 1px 3px rgba(0,0,0,.08)}
+  .client-row{display:flex;align-items:center;gap:11px;padding:11px 0;border-bottom:1px solid var(--line)}
+  .av{width:34px;height:34px;border-radius:50%;background:var(--brand2);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px;flex:none}
+  .pill{font-size:11px;font-weight:700;padding:3px 9px;border-radius:20px}
+  .pill.green{background:#e2f3ee;color:#1f7a63}.pill.amber{background:#fbf0dd;color:#9a6b18}.pill.red{background:#fbe3dc;color:#b1432a}
+  footer{padding:14px 18px 26px;text-align:center;font-size:11px;color:var(--mut)}
+  footer b{color:var(--brand)}
+  .badge{font-size:11px;color:#fff;background:rgba(0,0,0,.18);padding:3px 9px;border-radius:20px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div style="display:flex;justify-content:space-between;align-items:center">
+      <div><h1>Дневник самонаблюдения</h1><p id="sub">Раздел <span id="secn">1</span> из 4 · отвечайте честно</p></div>
+      <span class="badge" id="mode">клиент</span>
+    </div>
+    <div class="bar"><i id="prog"></i></div>
+  </header>
+  <main id="app"></main>
+  <footer>Демо AI-трекера · опросник → авто-отчёт → рекомендации → сводка специалисту<br>
+  Прототип <b>Никита Цветков</b> · PWA, работает на Android и iOS без установки из стора</footer>
+</div>
+<script>
+// ---- Модель опросника (демо: 4 из 6 разделов ТЗ) ----
+const SECTIONS = [
+  {key:'sleep', tag:'Сон', q:[
+    {t:'Сколько часов вы спали этой ночью?', type:'opt', o:[['<5 ч',1],['5–6 ч',2],['6–7 ч',3],['7–8 ч',4],['>8 ч',4]]},
+    {t:'Как вы оцениваете качество сна?', type:'scale', lo:'плохое', hi:'отличное'}
+  ]},
+  {key:'stress', tag:'Стресс', q:[
+    {t:'Уровень стресса за день', type:'scale', lo:'спокойно', hi:'на пределе', invert:true},
+    {t:'Были ли тревога или раздражительность?', type:'opt', o:[['Постоянно',1],['Часто',2],['Иногда',3],['Почти нет',4]]}
+  ]},
+  {key:'gut', tag:'ЖКТ', q:[
+    {t:'Комфорт пищеварения сегодня', type:'scale', lo:'тяжесть/боль', hi:'комфортно'},
+    {t:'Регулярность стула', type:'opt', o:[['Запор/диарея',1],['Нерегулярно',2],['Почти в норме',3],['В норме',4]]}
+  ]},
+  {key:'nutrition', tag:'Питание и БАДы', q:[
+    {t:'Сколько приёмов пищи без перекусов-«срывов»?', type:'opt', o:[['0–1',1],['2',2],['3',3],['4+',4]]},
+    {t:'Приняли ли назначенные БАДы по схеме?', type:'opt', o:[['Забыл(а)',1],['Частично',2],['Почти все',3],['Все по схеме',4]]}
+  ]}
+];
+const RECS = {
+  sleep:{low:'Сон в дефиците. Цель — отбой до 23:00 и 7–8 ч. Уберите экраны за час до сна, проветрите комнату.',mid:'Сон близок к норме. Стабилизируйте время подъёма даже в выходные.',high:'Отличный сон — поддерживайте режим.'},
+  stress:{low:'Высокая нагрузка на нервную систему. Добавьте 10 минут дыхания 4-7-8 и прогулку днём; обсудим адаптогены со специалистом.',mid:'Стресс умеренный. Следите за паузами в работе и водным балансом.',high:'Стресс под контролем — хороший фон для восстановления.'},
+  gut:{low:'ЖКТ требует внимания. Мягкая клетчатка, тёплая вода натощак; зафиксируем продукты-провокаторы в дневнике.',mid:'Пищеварение стабилизируется. Продолжайте дробное питание.',high:'ЖКТ в комфорте — закрепляем рацион.'},
+  nutrition:{low:'Срывы и пропуск БАДов тормозят прогресс. Подготовьте перекусы заранее, поставьте напоминания на приём добавок.',mid:'Питание налаживается. Добавьте белок в первый приём пищи.',high:'Дисциплина по питанию и БАДам отличная.'}
+};
+const app=document.getElementById('app');
+let si=0, qi=0, answers={};
+SECTIONS.forEach(s=>answers[s.key]=[]);
+
+function setProg(){
+  const total=SECTIONS.reduce((a,s)=>a+s.q.length,0);
+  let done=0; SECTIONS.forEach(s=>done+=answers[s.key].filter(v=>v!=null).length);
+  document.getElementById('prog').style.width=(done/total*100)+'%';
+  document.getElementById('secn').textContent=Math.min(si+1,SECTIONS.length);
+}
+function renderQ(){
+  document.getElementById('mode').textContent='клиент';
+  document.getElementById('sub').style.display='';
+  const S=SECTIONS[si], Q=S.q[qi];
+  let cur=answers[S.key][qi];
+  let body=`<div class="card"><span class="sec-tag">${S.tag}</span><p class="q">${Q.t}</p>`;
+  if(Q.type==='opt'){
+    body+='<div>'+Q.o.map((o,i)=>`<div class="opt ${cur===o[1]?'sel':''}" data-v="${o[1]}"><span class="dot"></span><span>${o[0]}</span></div>`).join('')+'</div>';
+  } else {
+    body+='<div class="scale">'+[1,2,3,4,5].map(n=>`<button data-n="${n}" class="${cur===n?'sel':''}">${n}</button>`).join('')+'</div>';
+    body+=`<div class="scale-lbl"><span>${Q.lo}</span><span>${Q.hi}</span></div>`;
+  }
+  body+='</div>';
+  body+=`<div class="nav">${(si||qi)?'<button class="btn ghost" id="back">Назад</button>':''}<button class="btn primary" id="next" ${cur==null?'disabled':''}>${isLast()?'Готово · отчёт':'Далее'}</button></div>`;
+  app.innerHTML=body;
+  app.querySelectorAll('.opt').forEach(e=>e.onclick=()=>{answers[S.key][qi]=+e.dataset.v;renderQ();setProg();});
+  app.querySelectorAll('.scale button').forEach(e=>e.onclick=()=>{let n=+e.dataset.n;answers[S.key][qi]=Q.invert?(6-n):n;renderQ();setProg();});
+  const nx=document.getElementById('next'); if(nx)nx.onclick=adv;
+  const bk=document.getElementById('back'); if(bk)bk.onclick=goBack;
+  setProg();
+}
+function isLast(){return si===SECTIONS.length-1 && qi===SECTIONS[si].q.length-1;}
+function adv(){ if(isLast())return report(); if(qi<SECTIONS[si].q.length-1)qi++; else {si++;qi=0;} renderQ(); }
+function goBack(){ if(qi>0)qi--; else if(si>0){si--;qi=SECTIONS[si].q.length-1;} renderQ(); }
+
+function secScore(k){const a=answers[k];return a.reduce((x,y)=>x+y,0)/(a.length*4)*100;}
+function band(p){return p<45?'low':p<72?'mid':'high';}
+function color(p){return p<45?'#c0563b':p<72?'#d9a13a':'#2e7d6b';}
+
+function report(){
+  document.getElementById('mode').textContent='отчёт';
+  document.getElementById('sub').style.display='none';
+  document.getElementById('prog').style.width='100%';
+  let metrics=SECTIONS.map(s=>({tag:s.tag,key:s.key,p:Math.round(secScore(s.key))}));
+  let overall=Math.round(metrics.reduce((a,m)=>a+m.p,0)/metrics.length);
+  let recs=metrics.filter(m=>m.p<72).sort((a,b)=>a.p-b.p);
+  let html=`<div class="card rep"><h2>Ваш отчёт за сегодня</h2>
+    <div class="metric"><div class="nm"><b>Общий индекс самочувствия</b></div>
+    <div class="gauge"><i style="width:${overall}%;background:${color(overall)}"></i></div><div class="score">${overall}</div></div>`;
+  metrics.forEach(m=>{html+=`<div class="metric"><div class="nm">${m.tag}</div>
+    <div class="gauge"><i style="width:${m.p}%;background:${color(m.p)}"></i></div><div class="score">${m.p}</div></div>`;});
+  html+='</div>';
+  html+='<div class="card rep"><h2>Персональные рекомендации</h2>';
+  if(recs.length===0){html+='<div class="rec"><span class="ic">✅</span><span>Все показатели в норме — отличная динамика, продолжайте текущий план.</span></div>';}
+  recs.forEach(m=>{html+=`<div class="rec"><span class="ic">${m.p<45?'🔴':'🟡'}</span><span><b>${m.tag}.</b> ${RECS[m.key][band(m.p)]}</span></div>`;});
+  html+=`<div class="ai-note">🧠 Рекомендации формирует ИИ-движок по вашим ответам и методике специалиста. Это не диагноз; при тревожных симптомах обратитесь к врачу.</div></div>`;
+  html+=`<div class="nav"><button class="btn ghost" id="restart">Пройти заново</button><button class="btn primary" id="toNut">Сводка специалиста ▸</button></div>`;
+  app.innerHTML=html;
+  document.getElementById('restart').onclick=()=>{si=0;qi=0;SECTIONS.forEach(s=>answers[s.key]=[]);renderQ();};
+  document.getElementById('toNut').onclick=nutritionist;
+}
+
+function nutritionist(){
+  document.getElementById('mode').textContent='специалист';
+  // демо-клиенты + текущий
+  let me=SECTIONS.map(s=>Math.round(secScore(s.key)));
+  let myAvg=Math.round(me.reduce((a,b)=>a+b,0)/me.length);
+  let roster=[
+    {n:'Вы (демо)',i:myAvg,note:me.map((p,idx)=>p<45?SECTIONS[idx].tag:'').filter(Boolean).join(', ')||'—'},
+    {n:'Анна К.',i:81,note:'—'},
+    {n:'Игорь М.',i:58,note:'Сон, Стресс'},
+    {n:'Ольга П.',i:39,note:'ЖКТ, Питание'},
+    {n:'Сергей Д.',i:67,note:'Стресс'}
+  ];
+  let avg=Math.round(roster.reduce((a,c)=>a+c.i,0)/roster.length);
+  let html=`<div class="tabs"><button id="t1">Клиент</button><button class="on">Сводка по клиентам</button></div>`;
+  html+=`<div class="card"><h2 style="font-size:16px;margin:0 0 10px">Кабинет нутрициолога</h2>
+    <div class="metric"><div class="nm">Клиентов под наблюдением</div><div class="score">${roster.length}</div></div>
+    <div class="metric"><div class="nm">Средний индекс группы</div>
+      <div class="gauge"><i style="width:${avg}%;background:${color(avg)}"></i></div><div class="score">${avg}</div></div>
+    <div class="metric"><div class="nm">Требуют внимания</div><div class="score" style="color:#c0563b">${roster.filter(r=>r.i<60).length}</div></div></div>`;
+  html+='<div class="card"><h2 style="font-size:16px;margin:0 0 4px">Клиенты · сегодня</h2>';
+  roster.sort((a,b)=>a.i-b.i).forEach(r=>{
+    let cls=r.i<45?'red':r.i<72?'amber':'green';
+    html+=`<div class="client-row"><span class="av">${r.n[0]}</span>
+      <div style="flex:1"><div style="font-weight:600;font-size:14px">${r.n}</div>
+      <div style="font-size:12px;color:#6b7d78">зоны риска: ${r.note}</div></div>
+      <span class="pill ${cls}">${r.i}</span></div>`;
+  });
+  html+='</div>';
+  html+=`<div class="nav"><button class="btn ghost" id="back2">◂ К отчёту клиента</button></div>`;
+  app.innerHTML=html;
+  document.getElementById('t1').onclick=report;
+  document.getElementById('back2').onclick=report;
+}
+renderQ();
+</script>
+</body>
+</html>
