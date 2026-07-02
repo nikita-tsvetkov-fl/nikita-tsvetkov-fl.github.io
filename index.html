@@ -122,6 +122,11 @@ footer{margin:48px 0;color:var(--mut);font-size:13px;border-top:1px solid var(--
     <div class="stack">Python · aiogram 3.x · Node.js · REST APIs · <a href="samples/leadbot-demo-preview.png">view UX demo</a> · <a href="https://github.com/nikita-tsvetkov-fl/telegram-leadbot">view code on GitHub</a></div>
   </div>
   <div class="card work">
+    <h3>Wildberries analytics bot &amp; dashboards</h3>
+    <p>A Telegram bot that pulls sales, orders and stock from the <b>WB Statistics API</b> and answers <code>/report day|week</code> with a business summary — revenue, payout, buyout rate, cancellations, top SKUs — plus scheduled daily/weekly auto-reports. Beyond the raw numbers it runs <b>ABC analysis</b>, per-SKU buyout, and <b>stock-cover in days vs supply lead time</b> to flag out-of-stock and reorder risks <b>before</b> they cost sales, with plain-language recommendations (LLM-written, deterministic fallback if no LLM). Exports to Excel. Runs on <b>your</b> WB API key in your own environment — keys never leave it.</p>
+    <div class="stack">Python · aiogram 3.x · WB Statistics API · pandas · ABC / stock-cover · LLM summary · Excel · <a href="samples/wb-analytics-report.html">view sample report (dashboard)</a></div>
+  </div>
+  <div class="card work">
     <h3>Corporate email automation &amp; access registry</h3>
     <p>Bulk-provision company mailboxes from a staff table: emails by transliteration with collision handling (<code>ivan.petrov</code>, <code>ivan.petrov2</code>), per-department group addresses, signatures, and an anti-spam DNS checklist (MX/SPF/DKIM/DMARC) tuned per provider (Yandex&nbsp;360 / Google Workspace / own server). Produces a clean <b>access registry</b> (who · mailbox · rights · granted · revoked · status) plus an onboarding/offboarding/recovery runbook the client maintains without me. Provider adapter runs dry by default; live mode calls the provider API <b>on the client's own accounts</b>.</p>
     <div class="stack">Python · openpyxl · Yandex 360 / Google Admin SDK · SPF/DKIM/DMARC · <a href="samples/email-access-registry-sample.xlsx">view access registry (.xlsx)</a> · <a href="samples/email-provision-plan-sample.json">view provisioning plan (.json)</a></div>
